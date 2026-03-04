@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:opsz,wght@9..144,300..900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-gray-100 antialiased font-sans m-0 p-0;
+  }
+}
+
+/* Custom easing for specific UI elements if needed later */
+.ease-apple {
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
