@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { DelayInputSchema } from '../src/lib/delay/delay.types';
-import { evaluateDelayRisk } from '../src/lib/delay/weightModel';
+import { DelayInputSchema } from '../src/lib/engine/types';
+import { evaluateDelayRisk } from '../src/lib/engine/weightModel';
 import { ZodError } from 'zod';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {

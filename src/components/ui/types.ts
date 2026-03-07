@@ -1,36 +1,40 @@
-import { HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
+import { HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
 // Card
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
-    children: React.ReactNode;
+  as?: "div" | "article" | "section" | "aside";
 }
 
 // Button
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-    size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "ghost" | "white";
+  size?: "sm" | "md" | "lg";
 }
 
 // Input
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-    label?: string;
-    error?: string;
+  label?: string;
+  type?: "text" | "number" | "range";
+  suffix?: string;
+  info?: string | ReactNode;
 }
 
 // Badge
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-    variant?: 'safe' | 'caution' | 'risk' | 'neutral';
-    children: React.ReactNode;
+  variant?: "ok" | "warn" | "danger";
+  dot?: boolean;
 }
 
-// Gauge
+// Gauge (Keeping for compatibility if used elsewhere)
 export interface GaugeProps {
-    score: number;
-    size?: number;
+  score: number;
+  size?: number;
 }
 
 // Slider
-export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-    label?: string;
-    hint?: string;
+export interface SliderProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label?: string;
+  hint?: string;
+  glow?: boolean;
 }

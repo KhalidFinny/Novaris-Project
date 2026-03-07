@@ -1,202 +1,264 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Slider } from '../components/ui/Slider';
-import { Badge } from '../components/ui/Badge';
-import { TutorialOverlay } from '../components/ui/TutorialOverlay';
-import { Link } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import type { DelayInput, DelayOutput } from '../lib/delay/delay.types';
-import { Activity, ShieldAlert, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Nav } from "../components/layout/Nav";
+import type { DelayInput, DelayOutput } from "../lib/engine/types";
+import { SimLayout } from "../components/layout/SimLayout";
+import { DelaySidebar } from "../features/delay/DelaySidebar";
+import { DelayProbabilityScene } from "../features/delay/DelayProbabilityScene";
+import { PhaseChartScene } from "../features/delay/PhaseChartScene";
+import { BottlenecksScene } from "../features/delay/BottlenecksScene";
+import { DEFAULT_DELAY } from "../features/delay/constants";
+import { TutorialOverlay } from "../components/ui/TutorialOverlay";
+import { SlidersHorizontal, AlertTriangle, BookOpenText } from "lucide-react";
+import { useLocale } from "../hooks/useLocale";
+import { useSeo } from "../hooks/useSeo";
+import logo3 from "../assets/logo/logo3.png";
 
-const TUTORIAL_STEPS = [
-    { targetId: 'step-inputs-delay', title: '1. Describe the Project', description: 'Enter details about your upcoming project like team size, complexity, and buffers.', position: 'right' as const },
-    { targetId: 'step-results-delay', title: '2. See the Timeline', description: 'The engine will calculate the probability of delays and project the true timeline against your optimistic target.', position: 'bottom' as const },
-    { targetId: 'step-mitigations-delay', title: '3. Spot Bottlenecks', description: 'Find the top 3 critical blockers along with exact steps to resolve them before they disrupt the schedule.', position: 'left' as const }
-];
+const toNumber = (value: unknown) => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+};
+
+const normalizeDelayInput = (form: DelayInput): DelayInput => ({
+  targetDurationDays: toNumber(form.targetDurationDays),
+  teamSize: toNumber(form.teamSize),
+  complexityScore: Math.max(1, toNumber(form.complexityScore)),
+  supplierLeadTimeVarianceDays: toNumber(form.supplierLeadTimeVarianceDays),
+  externalDependenciesCount: toNumber(form.externalDependenciesCount),
+  historicalDelayRate: toNumber(form.historicalDelayRate),
+  bufferDaysRemaining: toNumber(form.bufferDaysRemaining),
+  financialSensitivity: 0.5,
+});
 
 export default function Delay() {
-    const [showTutorial, setShowTutorial] = useState(true);
-    const [form, setForm] = useState<DelayInput>({
-        targetDurationDays: 90,
-        teamSize: 5,
-        complexityScore: 3,
-        supplierLeadTimeVarianceDays: 14,
-        externalDependenciesCount: 2,
-        historicalDelayRate: 20,
-        bufferDaysRemaining: 10
-    });
+  const { language, t } = useLocale();
 
-    const mutation = useMutation({
-        mutationFn: async (data: DelayInput): Promise<DelayOutput> => {
-            const res = await fetch('/api/delay', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            if (!res.ok) throw new Error('Simulation failed');
-            return res.json();
+  useSeo({
+    title:
+      language === "id"
+        ? "Novaris | Simulasi Risiko Delay"
+        : "Novaris | Delay Risk Simulator",
+    description:
+      language === "id"
+        ? "Analisis bottleneck proyek, probabilitas delay, dan dampaknya agar owner bisnis bisa bertindak lebih awal."
+        : "Analyze project bottlenecks, delay probability, and impact so business owners can act earlier.",
+    path: "/delay",
+    image: logo3,
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name:
+        language === "id"
+          ? "Novaris Simulasi Risiko Delay"
+          : "Novaris Delay Risk Simulator",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://novaris.app/delay",
+      description:
+        language === "id"
+          ? "Simulasi probabilitas delay, bottleneck, dan rentang durasi untuk membantu keputusan operasional lebih cepat."
+          : "Simulation of delay probability, bottlenecks, and duration range to support faster operational decisions.",
+    },
+  });
+  const [form, setForm] = useState<DelayInput>(DEFAULT_DELAY);
+  const [data, setData] = useState<DelayOutput | null>(null);
+  const [isPending, setIsPending] = useState(false);
+
+  const isReadyToSimulate = form.targetDurationDays > 0 && form.teamSize > 0;
+
+  useEffect(() => {
+    if (!isReadyToSimulate) {
+      setData(null);
+      setIsPending(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setIsPending(true);
+      try {
+        const payload: DelayInput = {
+          ...normalizeDelayInput(form),
+          financialSensitivity: 0.5,
+        };
+        const res = await fetch("/api/delay", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        if (!res.ok) {
+          throw new Error("Failed to run delay simulation");
         }
-    });
+        const result = (await res.json()) as DelayOutput;
+        setData(result);
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error(error);
+          setData(null);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsPending(false);
+        }
+      }
+    }, 350);
 
-    const handleRun = () => mutation.mutate(form);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [form, isReadyToSimulate]);
 
-    const data = mutation.data;
+  // Animate delay probability counter on new result
+  useEffect(() => {
+    if (!data) return;
+    const el = document.getElementById("delay-big-num");
+    if (!el) return;
+    let start = 0;
+    const target = data.delayProbability;
+    const step = () => {
+      start = Math.min(start + 2, target);
+      el.textContent = start + "%";
+      if (start < target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [data]);
 
-    return (
-        <div className="min-h-screen bg-brand-bg text-gray-100 p-6 font-sans">
-            {showTutorial && <TutorialOverlay steps={TUTORIAL_STEPS} onComplete={() => setShowTutorial(false)} />}
+  const prob = data?.delayProbability ?? 0;
+  const delayTextColor = !data
+    ? "var(--color-ink-faint)"
+    : prob < 30
+      ? "var(--color-steel-bright)"
+      : prob < 65
+        ? "#eab308" // warn
+        : "var(--color-scarlet)";
 
-            <header className="flex justify-between items-center mb-8 max-w-7xl mx-auto">
-                <Link to="/" className="text-xl font-bold text-white flex items-center gap-2 hover:text-brand-primary transition-colors">
-                    &larr; <ShieldAlert className="w-5 h-5 text-brand-primary" /> Novaris
-                </Link>
-                <div className="flex gap-4 items-center">
-                    <button onClick={() => setShowTutorial(true)} className="text-sm text-brand-muted hover:text-white underline underline-offset-4 mr-4">How to Use</button>
-                    <div className="flex gap-2 rounded-lg bg-brand-surface p-1 border border-gray-800">
-                        <span className="px-4 py-1.5 text-sm rounded-md bg-brand-primary/20 text-brand-primary font-medium">Delay Module</span>
-                        <Link to="/financial" className="px-4 py-1.5 text-sm rounded-md text-brand-muted hover:text-white transition-colors">Financial Module</Link>
-                    </div>
-                </div>
-            </header>
+  const range = data?.estimatedDelayDaysRange;
+  const expected = data?.expectedDurationDays;
+  const base = form.targetDurationDays;
 
-            <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 pb-20">
+  const headline = data
+    ? language === "id"
+      ? `Proyek ${base} hari Anda saat ini mengarah ke total ${expected} hari, dengan estimasi keterlambatan ${range?.[0]}-${range?.[1]} hari.`
+      : `Your ${base}-day project is currently tracking towards ${expected} days total, an estimated delay of ${range?.[0]}-${range?.[1]} days.`
+    : null;
 
-                {/* LEFT PANEL: Inputs */}
-                <Card className="lg:col-span-3 transition-opacity duration-300" id="step-inputs-delay">
-                    <CardHeader className="border-b border-gray-800/50 pb-4 mb-4">
-                        <CardTitle className="flex items-center gap-2"><Clock className="w-4 h-4 text-brand-primary" /> Project Setup</CardTitle>
-                        <p className="text-xs text-brand-muted mt-1">Configure project variables</p>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <Input label="Target Duration (Days)" type="number" value={form.targetDurationDays} onChange={e => setForm({ ...form, targetDurationDays: +e.target.value })} />
-                        <Input label="Team Size" type="number" value={form.teamSize} onChange={e => setForm({ ...form, teamSize: +e.target.value })} />
-                        <Slider label="Complexity (1-5)" value={form.complexityScore} onChange={e => setForm({ ...form, complexityScore: +e.target.value })} min={1} max={5} />
-                        <Input label="Supplier Variance (Days)" type="number" value={form.supplierLeadTimeVarianceDays} onChange={e => setForm({ ...form, supplierLeadTimeVarianceDays: +e.target.value })} />
-                        <Input label="External Dependencies" type="number" value={form.externalDependenciesCount} onChange={e => setForm({ ...form, externalDependenciesCount: +e.target.value })} />
-                        <Input label="Buffer Days" type="number" value={form.bufferDaysRemaining} onChange={e => setForm({ ...form, bufferDaysRemaining: +e.target.value })} />
-                        <Slider label="Historical Delay %" value={form.historicalDelayRate} onChange={e => setForm({ ...form, historicalDelayRate: +e.target.value })} min={0} max={100} />
+  const nextAction = !data
+    ? t("sim.impact.pending")
+    : prob >= 65
+      ? t("delay.weeklyAction.high")
+      : prob >= 30
+        ? t("delay.weeklyAction.medium")
+        : t("delay.weeklyAction.low");
 
-                        <Button className="w-full mt-6" onClick={handleRun} disabled={mutation.isPending}>
-                            {mutation.isPending ? 'Calculating Network...' : 'Analyze Delays'}
-                        </Button>
-                    </CardContent>
-                </Card>
+  const impactBar = (
+    <div className="grid grid-cols-4 gap-4">
+      <div className="rounded-xl border border-ink/8 dark:border-frost/8 px-4 py-3 bg-white/55 dark:bg-white/[0.02]">
+        <p className="font-sans text-[12px] text-ink/45 dark:text-frost/45 mb-1">
+          {t("sim.impact.delay")}
+        </p>
+        <p className="font-sans text-lg text-ink dark:text-frost">{data?.delayProbability ?? 0}%</p>
+      </div>
+      <div className="rounded-xl border border-ink/8 dark:border-frost/8 px-4 py-3 bg-white/55 dark:bg-white/[0.02]">
+        <p className="font-sans text-[12px] text-ink/45 dark:text-frost/45 mb-1">
+          {t("sim.impact.targetDuration")}
+        </p>
+        <p className="font-sans text-lg text-ink dark:text-frost">
+          {form.targetDurationDays} {t("sim.unit.days")}
+        </p>
+      </div>
+      <div className="rounded-xl border border-ink/8 dark:border-frost/8 px-4 py-3 bg-white/55 dark:bg-white/[0.02]">
+        <p className="font-sans text-[12px] text-ink/45 dark:text-frost/45 mb-1">
+          {t("sim.impact.potentialDelay")}
+        </p>
+        <p className="font-sans text-lg text-ink dark:text-frost">
+          {data
+            ? `${data.estimatedDelayDaysRange[0]}-${data.estimatedDelayDaysRange[1]} ${t("sim.unit.days")}`
+            : `0 ${t("sim.unit.days")}`}
+        </p>
+      </div>
+      <div className="rounded-xl border border-ink/8 dark:border-frost/8 px-4 py-3 bg-white/55 dark:bg-white/[0.02]">
+        <p className="font-sans text-[12px] text-ink/45 dark:text-frost/45 mb-1">
+          {t("sim.impact.monitoring")}
+        </p>
+        <p className="font-sans text-lg text-ink dark:text-frost">
+          {data
+            ? t(`sim.monitoring.${data.delayMonitoringState}`)
+            : t("sim.monitoring.inactive")}
+        </p>
+        <p className="font-sans text-[13px] text-ink/65 dark:text-frost/65 leading-snug mt-1">
+          {nextAction}
+        </p>
+      </div>
+    </div>
+  );
 
-                {/* CENTER PANEL: Main Visualization */}
-                <Card className="lg:col-span-6 bg-[#0B0E14] border-gray-800 overflow-hidden relative" id="step-results-delay">
-                    <div className="absolute inset-0 bg-gradient-to-b from-brand-risk/5 to-transparent pointer-events-none"></div>
-                    <CardHeader className="text-center pt-8">
-                        <CardTitle className="font-display text-lg text-brand-muted uppercase tracking-widest font-normal">Delay Probability</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center min-h-[500px] mt-4">
+  return (
+    <main className="min-h-screen bg-arctic dark:bg-void transition-colors duration-520">
+      <Nav />
 
-                        {!data ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-brand-muted opacity-50">
-                                <Clock className="w-12 h-12 mb-4 animate-pulse text-brand-risk" />
-                                <p>Awaiting structural project parameters...</p>
-                            </div>
-                        ) : (
-                            <div className="w-full flex-1 flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
-                                <div className="text-center mb-8 relative">
-                                    <div className={`text-8xl font-black tracking-tighter ${data.delayProbability > 60 ? 'text-brand-risk' : data.delayProbability > 30 ? 'text-brand-caution' : 'text-brand-safe'} drop-shadow-2xl`}>
-                                        {data.delayProbability.toFixed(0)}<span className="text-4xl text-brand-muted/50">%</span>
-                                    </div>
-                                    <Badge className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap" variant={data.delayProbability > 50 ? 'risk' : 'safe'}>
-                                        Expected Timeline: {data.expectedDurationDays.toFixed(0)} Days
-                                    </Badge>
-                                </div>
+      <TutorialOverlay
+        storageKey="novaris_delay_tutorial"
+        onComplete={() => {}}
+        steps={[
+          {
+            targetId: "delay-sidebar-fields",
+            title: language === "id" ? "Atur Parameternya" : "Set the Stage",
+            description:
+              language === "id"
+                ? "Tentukan parameter proyek Anda. Atur kompleksitas, ukuran tim, dan variasi supplier sesuai kondisi operasional."
+                : "Define your project parameters. Adjust complexity, team size, and supplier variance to match your reality.",
+            icon: <SlidersHorizontal size={14} />,
+          },
+          {
+            targetId: "delay-bottlenecks",
+            title:
+              language === "id" ? "Identifikasi Friksi" : "Identify the Friction",
+            description:
+              language === "id"
+                ? "Engine langsung menyorot faktor operasional yang paling mungkin mengganggu timeline."
+                : "The engine instantly highlights which factors are most likely to derail your timeline.",
+            icon: <AlertTriangle size={14} />,
+          },
+          {
+            targetId: "delay-headline",
+            title: language === "id" ? "Baca Hasilnya" : "Read the Outcome",
+            description:
+              language === "id"
+                ? "Angka memberi konteks, tapi narasi memberi strategi. Ringkasan ini akan ter-update real-time saat variabel diubah."
+                : "Numbers are context, but narrative is strategy. Watch this summary update in real-time as you tweak variables.",
+            icon: <BookOpenText size={14} />,
+          },
+        ]}
+      />
 
-                                <div className="w-full mt-6 flex justify-between items-center bg-brand-surface border border-gray-800 p-4 rounded-xl">
-                                    <div className="text-center w-full border-r border-gray-800">
-                                        <p className="text-sm text-brand-muted mb-1">Target</p>
-                                        <p className="text-2xl font-bold font-mono text-white">{form.targetDurationDays}d</p>
-                                    </div>
-                                    <div className="text-center w-full">
-                                        <p className="text-sm text-brand-muted mb-1">Risk-Adjusted Estimate</p>
-                                        <p className="text-2xl font-bold font-mono text-brand-risk">+{data.estimatedDelayDaysRange[1].toFixed(0)}d maximum delay</p>
-                                    </div>
-                                </div>
-
-                                <div className="w-full h-48 mt-auto pt-6">
-                                    <h4 className="text-xs text-brand-muted font-semibold uppercase tracking-wider mb-4 pl-4">Phase Variance Impact</h4>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={data.timelineProjection} layout="vertical" margin={{ top: 0, right: 30, left: 30, bottom: 0 }}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" horizontal={false} />
-                                            <XAxis type="number" stroke="#4B5563" tick={{ fill: '#6B7280', fontSize: 12 }} />
-                                            <YAxis dataKey="phase" type="category" stroke="#4B5563" tick={{ fill: '#E5E7EB', fontSize: 12 }} width={100} />
-                                            <Tooltip
-                                                cursor={{ fill: '#1F2937' }}
-                                                contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', borderRadius: '8px' }}
-                                                itemStyle={{ color: '#E5E7EB' }}
-                                            />
-                                            <Bar dataKey="optimisticDays" stackId="a" fill="#2563EB" name="Base Time" radius={[4, 0, 0, 4]} barSize={16}>
-                                                {data.timelineProjection.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={'#2563EB'} fillOpacity={0.8} />
-                                                ))}
-                                            </Bar>
-                                            <Bar dataKey="pessimisticDays" stackId="a" fill="#DC2626" name="Max Delay Variance" radius={[0, 4, 4, 0]}>
-                                                {data.timelineProjection.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={'#DC2626'} fillOpacity={0.9} />
-                                                ))}
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* RIGHT PANEL: Breakdown and Mitigations */}
-                <div className="lg:col-span-3 flex flex-col gap-6" id="step-mitigations-delay">
-                    <Card className="flex-1 bg-brand-surface border-gray-800">
-                        <CardHeader className="border-b border-gray-800/50 pb-4 mb-4">
-                            <CardTitle className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-brand-caution" /> Critical Bottlenecks</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {!data ? (
-                                <p className="text-sm text-brand-muted text-center mt-10 opacity-50">Run analysis to view bottlenecks</p>
-                            ) : (
-                                data.criticalBottlenecks.map((bottleneck, i) => (
-                                    <div key={i} className="p-3 bg-[#0D1117] rounded-lg border border-brand-risk/20 shadow-sm animate-in slide-in-from-right-4 fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-                                        <div className="flex justify-between items-start mb-1">
-                                            <p className="text-sm font-medium text-gray-300 leading-snug">{bottleneck.factor}</p>
-                                            <span className="text-xs font-mono text-brand-risk">+{bottleneck.delayDaysAdded.toFixed(1)}d</span>
-                                        </div>
-                                        <div className="w-full bg-gray-800 h-1 mt-2 rounded-full overflow-hidden">
-                                            <div className="bg-brand-risk h-full" style={{ width: `${Math.min(100, (bottleneck.weight) * 400)}%` }}></div>
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </CardContent>
-                    </Card>
-
-                    <Card className="flex-1 bg-brand-surface border-gray-800">
-                        <CardHeader className="border-b border-gray-800/50 pb-4 mb-4">
-                            <CardTitle className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-brand-safe" /> Action Plan</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {!data ? (
-                                <p className="text-sm text-brand-muted text-center mt-4 opacity-50">Run analysis for mitigation tactics</p>
-                            ) : (
-                                <ul className="text-sm text-brand-muted space-y-4">
-                                    {data.mitigationSuggestions.map((suggestion, i) => (
-                                        <li key={i} className="flex gap-3 animate-in fade-in" style={{ animationDelay: `${i * 150}ms` }}>
-                                            <span className="shrink-0 w-1.5 h-1.5 mt-1.5 rounded-full bg-brand-safe shadow-[0_0_8px_rgba(5,150,105,0.6)]"></span>
-                                            <span className="leading-relaxed">{suggestion}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </CardContent>
-                    </Card>
-                </div>
-
-            </main>
+      <SimLayout
+        controls={<DelaySidebar form={form} onFormChange={setForm} isPending={isPending} />}
+        impactBar={impactBar}
+        controlsCollapsible
+        controlsDefaultOpen
+      >
+        <div id="delay-headline">
+          <DelayProbabilityScene
+            data={data || undefined}
+            isPending={isPending}
+            probColor={delayTextColor}
+            headline={headline}
+            targetDurationDays={form.targetDurationDays}
+            language={language}
+          />
         </div>
-    );
+        <PhaseChartScene
+          data={data || undefined}
+          isPending={isPending}
+          language={language}
+        />
+        {data && (
+          <div id="delay-bottlenecks">
+            <BottlenecksScene data={data} language={language} />
+          </div>
+        )}
+      </SimLayout>
+    </main>
+  );
 }

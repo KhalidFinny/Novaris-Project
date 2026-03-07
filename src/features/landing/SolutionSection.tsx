@@ -1,0 +1,121 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { FEATURES, FEATURES_ID, FEATURE_TAGS, FEATURE_TAGS_ID } from "./data";
+import { useLocale } from "../../hooks/useLocale";
+
+export function SolutionSection() {
+  const { language } = useLocale();
+  const isId = language === "id";
+  const features = isId ? FEATURES_ID : FEATURES;
+  const tags = isId ? FEATURE_TAGS_ID : FEATURE_TAGS;
+
+  return (
+    <section
+      id="platform"
+      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-transparent dark:bg-transparent transition-colors duration-520"
+    >
+      <div className="max-w-content mx-auto">
+        {/* 2-col grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start mb-16">
+          {/* Left */}
+          <div>
+            <div
+              className="flex items-center gap-2.5 mb-4.5
+                            font-mono text-[9px] tracking-widest uppercase
+                            text-scarlet dark:text-scarlet-bright"
+            >
+              <span
+                className="w-4 h-px bg-scarlet dark:bg-scarlet-bright shrink-0"
+                aria-hidden="true"
+              />
+               {isId ? "Solusi" : "The solution"}
+            </div>
+            <h2
+              className="font-fraunces font-semibold
+                         leading-none tracking-tight text-ink dark:text-frost mb-6
+                         transition-colors duration-520"
+              style={{ fontSize: "clamp(36px, 4.5vw, 64px)" }}
+            >
+              {isId ? "Manajemen risiko untuk" : "Risk management built for"}{" "}
+              <span className="text-steel dark:text-steel-bright">
+                {isId ? "cara kerja Anda." : "how you work."}
+              </span>
+            </h2>
+            <p className="font-sans font-light text-base text-ink/70 dark:text-frost/70 leading-relaxed max-w-[40ch] mb-8">
+              {isId
+                ? "Novaris terhubung ke tools Anda, memetakan eksposur secara otomatis, dan hanya menampilkan hal yang benar-benar perlu perhatian."
+                : "Novaris connects to your tools, maps your exposure automatically, and surfaces only what needs your attention — without demanding your time every day."}
+            </p>
+            <Link
+              to="/financial"
+              className="inline-flex font-sans font-semibold text-[11.5px] uppercase tracking-wider
+                         px-7 py-3 rounded-card
+                         bg-scarlet dark:bg-scarlet-bright text-white
+                         hover:bg-scarlet-dark dark:hover:bg-scarlet-hover hover:-translate-y-0.5
+                         transition-all duration-200 ease-spring border-0 cursor-pointer no-underline"
+            >
+              {isId ? "Jelajahi Platform" : "Explore the Platform"}
+            </Link>
+          </div>
+
+          {/* Right: feature rows */}
+          <div className="flex flex-col">
+            {features.map((f, i) => (
+              <div
+                key={i}
+                className="feat-row group grid grid-cols-[28px_1fr_16px] gap-3.5 items-start
+                           py-4 border-b border-ink/9 dark:border-frost/8
+                           cursor-pointer
+                           first:border-t first:border-ink/9 dark:first:border-t dark:first:border-frost/8"
+              >
+                {/* Index */}
+                <span
+                  className="font-mono text-[9.5px] tracking-wider text-ink/30 dark:text-frost/28 pt-0.5
+                                 group-hover:text-scarlet dark:group-hover:text-scarlet-bright transition-colors duration-200"
+                >
+                  {f.n}
+                </span>
+                {/* Text */}
+                <div>
+                  <div className="font-sans font-medium text-[13.5px] text-ink dark:text-frost mb-0.5">
+                    {f.label}
+                  </div>
+                  <div className="font-sans font-light text-xs text-ink/30 dark:text-frost/28 leading-snug">
+                    {f.desc}
+                  </div>
+                </div>
+                {/* Arrow */}
+                <span
+                  className="font-sans text-[12px] text-scarlet dark:text-scarlet-bright pt-0.5
+                                 opacity-0 -translate-x-1
+                                 group-hover:opacity-100 group-hover:translate-x-0
+                                 transition-all duration-200 ease-spring"
+                >
+                  →
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Chip scroll strip */}
+        <div className="flex overflow-x-auto gap-2 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {tags.map((tag, i) => (
+            <div
+              key={i}
+              className="chip flex-none font-mono text-[9.5px] tracking-widest uppercase
+                         text-ink/50 dark:text-frost/50 py-1.75 px-3.5
+                         rounded-card border border-ink/9 dark:border-frost/8
+                         bg-transparent whitespace-nowrap cursor-pointer
+                         hover:bg-scarlet dark:hover:bg-scarlet-bright hover:text-white
+                         hover:border-scarlet dark:hover:border-scarlet-bright
+                         transition-all duration-200 ease-spring"
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { FinancialInputSchema } from '../src/lib/financial/financial.types';
-import { evaluateFinancialRisk } from '../src/lib/financial/riskModel';
+import { FinancialInputSchema } from '../src/lib/engine/types';
+import { evaluateFinancialRisk } from '../src/lib/engine/riskModel';
 import { ZodError } from 'zod';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
