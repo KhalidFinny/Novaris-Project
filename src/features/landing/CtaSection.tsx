@@ -12,13 +12,7 @@ export function CtaSection() {
   return (
     <>
       {/* ── CONTACT / CTA ── */}
-      <section
-        className="px-13 py-25 relative overflow-hidden max-sm:px-6"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(236,241,248,1) 0%, rgba(164,22,36,0.9) 10%, var(--color-scarlet) 26%, var(--color-scarlet) 100%)",
-        }}
-      >
+      <section className="px-13 py-25 relative overflow-hidden max-sm:px-6 bg-scarlet">
         {/* Metallic shimmer top line */}
         <div
           className="absolute top-0 left-0 right-0 h-px"
@@ -61,7 +55,9 @@ export function CtaSection() {
                          transition-colors duration-520"
                 style={{ fontSize: "clamp(40px, 5vw, 76px)" }}
               >
-                {isId ? "Berhenti berjalan tanpa visibilitas." : "Stop flying blind."}
+                {isId
+                  ? "Berhenti berjalan tanpa visibilitas."
+                  : "Stop flying blind."}
               </h2>
               <p className="font-sans font-light text-xl text-white/70 leading-relaxed max-w-[35ch] mx-auto mb-10">
                 {isId
@@ -121,7 +117,9 @@ export function CtaSection() {
                 className="font-mono text-[8.5px] tracking-widest uppercase mb-4"
                 style={{ color: "rgba(255,255,255,0.32)" }}
               >
-                {isId ? "Yang Anda dapat di hari pertama" : "What you get on day one"}
+                {isId
+                  ? "Yang Anda dapat di hari pertama"
+                  : "What you get on day one"}
               </div>
               {dayOneFeatures.map((f, i) => (
                 <div
@@ -166,10 +164,15 @@ export function CtaSection() {
           className="h-6 w-auto object-contain opacity-70"
         />
         <span className="font-mono text-[9.5px] tracking-wider text-ink/30 dark:text-frost/28">
-          {isId ? "© 2025 Novaris Inc. — Hak cipta dilindungi." : "© 2025 Novaris Inc. — All rights reserved."}
+          {isId
+            ? "© 2025 Novaris Inc. — Hak cipta dilindungi."
+            : "© 2025 Novaris Inc. — All rights reserved."}
         </span>
         <div className="flex gap-5">
-          {(isId ? ["Privasi", "Ketentuan", "Kontak"] : ["Privacy", "Terms", "Contact"]).map((label) => (
+          {(isId
+            ? ["Privasi", "Ketentuan", "Kontak"]
+            : ["Privacy", "Terms", "Contact"]
+          ).map((label) => (
             <a
               key={label}
               href="#"

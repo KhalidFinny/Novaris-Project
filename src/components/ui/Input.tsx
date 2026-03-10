@@ -3,7 +3,19 @@ import { Info } from "lucide-react";
 import type { InputProps } from "./types";
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className = "", label, suffix, type = "text", info, ...props }, ref) => {
+  (
+    {
+      className = "",
+      label,
+      suffix,
+      type = "text",
+      info,
+      invalid = false,
+      errorText,
+      ...props
+    },
+    ref,
+  ) => {
     const [showInfo, setShowInfo] = useState(false);
     if (type === "range") {
       return (
@@ -11,7 +23,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <div className="flex justify-between items-end mb-2 relative">
               <div className="flex items-center gap-1.5">
-                <span className="font-sans text-[13px] font-medium text-ink/55 dark:text-frost/55">
+                <span
+                  className={`font-sans text-[13px] font-medium ${
+                    invalid
+                      ? "text-scarlet dark:text-scarlet-bright"
+                      : "text-ink/55 dark:text-frost/55"
+                  }`}
+                >
                   {label}
                 </span>
                 {info && (
@@ -42,8 +60,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className="w-full h-1 bg-ink/8 dark:bg-frost/8 appearance-none cursor-pointer rounded-full"
             style={{ accentColor: "var(--color-scarlet)" }}
+            aria-invalid={invalid}
             {...props}
           />
+          {invalid && errorText && (
+            <p className="mt-2 font-sans text-[12px] text-scarlet dark:text-scarlet-bright">
+              {errorText}
+            </p>
+          )}
         </div>
       );
     }
@@ -53,7 +77,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <div className="flex justify-between items-end mb-2 relative">
             <div className="flex items-center gap-1.5">
-                <span className="font-sans text-[13px] font-medium text-ink/55 dark:text-frost/55">
+                <span
+                  className={`font-sans text-[13px] font-medium ${
+                    invalid
+                      ? "text-scarlet dark:text-scarlet-bright"
+                      : "text-ink/55 dark:text-frost/55"
+                  }`}
+                >
                   {label}
                 </span>
               {info && (
@@ -88,12 +118,21 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             placeholder={
               type === "number" && !props.placeholder ? "0" : props.placeholder
             }
-            className="w-full h-11 rounded-[8px] px-4 font-sans text-[15px] text-ink dark:text-frost outline-none transition-all duration-500 placeholder:text-ink/30 dark:placeholder:text-frost/30
-                                   bg-ink/4 dark:bg-frost/4 border border-ink/9 dark:border-frost/8
-                                   focus:border-scarlet/40 dark:focus:border-scarlet-bright/40 focus:bg-ink/6 dark:focus:bg-frost/6"
+            className={`w-full h-11 rounded-[8px] px-4 font-sans text-[15px] text-ink dark:text-frost outline-none transition-all duration-500 placeholder:text-ink/30 dark:placeholder:text-frost/30
+                                   bg-ink/4 dark:bg-frost/4 border focus:bg-ink/6 dark:focus:bg-frost/6 ${
+                                     invalid
+                                       ? "border-scarlet/55 dark:border-scarlet-bright/60"
+                                       : "border-ink/9 dark:border-frost/8 focus:border-scarlet/40 dark:focus:border-scarlet-bright/40"
+                                   }`}
+            aria-invalid={invalid}
             {...props}
           />
         </div>
+        {invalid && errorText && (
+          <p className="mt-2 font-sans text-[12px] text-scarlet dark:text-scarlet-bright">
+            {errorText}
+          </p>
+        )}
       </div>
     );
   },

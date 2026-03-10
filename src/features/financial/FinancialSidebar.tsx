@@ -2,7 +2,11 @@ import React from "react";
 import { Input } from "../../components/ui/Input";
 import { useLocale } from "../../hooks/useLocale";
 import type { FinancialInput } from "../../lib/engine/types";
-import type { FinancialFieldProps, FinancialSidebarProps } from "./types";
+import type {
+  FinancialFieldProps,
+  FinancialFormState,
+  FinancialSidebarProps,
+} from "./types";
 
 type SectionId = "core" | "debt" | "growth" | "cascade";
 
@@ -13,8 +17,34 @@ const formatWithDots = (value: number) =>
 
 const parseDotNumber = (value: string) => {
   const normalized = value.replace(/[^\d]/g, "");
-  if (!normalized) return 0;
+  if (!normalized) return "";
   return Number(normalized);
+};
+
+const preserveCaretAfterFormat = (
+  inputEl: HTMLInputElement,
+  digitsBeforeCursor: number,
+  formatted: string,
+) => {
+  if (!formatted) {
+    inputEl.setSelectionRange(0, 0);
+    return;
+  }
+
+  let digitSeen = 0;
+  let nextCursor = formatted.length;
+
+  for (let i = 0; i < formatted.length; i++) {
+    if (/\d/.test(formatted[i])) {
+      digitSeen += 1;
+    }
+    if (digitSeen >= Math.max(1, digitsBeforeCursor)) {
+      nextCursor = i + 1;
+      break;
+    }
+  }
+
+  inputEl.setSelectionRange(nextCursor, nextCursor);
 };
 
 function NumberField({
@@ -26,9 +56,12 @@ function NumberField({
   info,
   placeholder,
   onBlur,
+  invalid,
+  errorText,
 }: FinancialFieldProps & { onBlur?: () => void }) {
-  const raw = Number(form[fieldKey] || 0);
-  const display = raw > 0 ? formatWithDots(raw) : "";
+  const raw = form[fieldKey];
+  const display =
+    raw === "" ? "" : typeof raw === "number" ? formatWithDots(raw) : "";
 
   return (
     <Input
@@ -40,9 +73,26 @@ function NumberField({
       info={info}
       placeholder={placeholder}
       onBlur={onBlur}
+      invalid={invalid}
+      errorText={errorText}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        const parsed = parseDotNumber(e.target.value);
-        onChange({ ...form, [fieldKey]: parsed });
+        const inputEl = e.target;
+        const cursor = inputEl.selectionStart ?? inputEl.value.length;
+        const digitsBeforeCursor = (
+          inputEl.value.slice(0, cursor).match(/\d/g) || []
+        ).length;
+
+        const parsed = parseDotNumber(inputEl.value);
+        onChange({ ...form, [fieldKey]: parsed } as FinancialFormState);
+
+        requestAnimationFrame(() => {
+          if (document.activeElement !== inputEl) {
+            return;
+          }
+          const formatted =
+            parsed === "" ? "" : formatWithDots(Number(parsed));
+          preserveCaretAfterFormat(inputEl, digitsBeforeCursor, formatted);
+        });
       }}
     />
   );
@@ -58,6 +108,8 @@ function RangeField({
   suffix,
   info,
   onBlur,
+  invalid,
+  errorText,
 }: FinancialFieldProps & { onBlur?: () => void }) {
   return (
     <Input
@@ -67,11 +119,13 @@ function RangeField({
       max={max}
       suffix={suffix}
       info={info}
-      value={Number(form[fieldKey] || 0)}
+      value={Number(form[fieldKey] === "" ? 0 : form[fieldKey])}
       onBlur={onBlur}
+      invalid={invalid}
+      errorText={errorText}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         const val = Number(e.target.value);
-        onChange({ ...form, [fieldKey]: Number.isFinite(val) ? val : 0 });
+        onChange({ ...form, [fieldKey]: Number.isFinite(val) ? val : "" } as FinancialFormState);
       }}
     />
   );
@@ -90,7 +144,11 @@ interface SectionField {
 
 type SaveState = "saved" | "editing";
 
-export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) {
+export function FinancialSidebar({
+  form,
+  onFormChange,
+  invalidFieldKeys,
+}: FinancialSidebarProps) {
   const { language, currency, t } = useLocale();
   const isId = language === "id";
   const c = currency === "USD" ? "$" : "Rp";
@@ -264,7 +322,7 @@ export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) 
     }, 450);
   };
 
-  const handleFormChange = (next: FinancialInput) => {
+  const handleFormChange = (next: FinancialFormState) => {
     markSavedSoon();
     onFormChange(next);
   };
@@ -277,10 +335,10 @@ export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) 
     };
   }, []);
 
-  const isFilled = (fieldKey: keyof FinancialInput) => Number(form[fieldKey] || 0) > 0;
+  const isFilled = (fieldKey: keyof FinancialInput) => form[fieldKey] !== "";
 
   const applyVariableSpendToPercent = () => {
-    const variableSpend = parseDotNumber(variableSpendDraft);
+    const variableSpend = Number(parseDotNumber(variableSpendDraft) || 0);
     const revenue = Number(form.monthlyRevenue || 0);
     if (revenue <= 0 || variableSpend < 0) return;
     const pct = Math.max(0, Math.min(100, (variableSpend / revenue) * 100));
@@ -364,6 +422,12 @@ export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) 
                     suffix={field.suffix}
                     info={field.info}
                     onBlur={() => setSaveState("saved")}
+                    invalid={Boolean(invalidFieldKeys?.has(field.fieldKey))}
+                    errorText={
+                      invalidFieldKeys?.has(field.fieldKey)
+                        ? t("validation.fieldRequired")
+                        : undefined
+                    }
                   />
                 ) : (
                   <NumberField
@@ -375,6 +439,12 @@ export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) 
                     info={field.info}
                     placeholder={field.placeholder}
                     onBlur={() => setSaveState("saved")}
+                    invalid={Boolean(invalidFieldKeys?.has(field.fieldKey))}
+                    errorText={
+                      invalidFieldKeys?.has(field.fieldKey)
+                        ? t("validation.fieldRequired")
+                        : undefined
+                    }
                   />
                 )}
 
@@ -391,8 +461,25 @@ export function FinancialSidebar({ form, onFormChange }: FinancialSidebarProps) 
                         inputMode="numeric"
                         value={variableSpendDraft}
                         onChange={(e) => {
-                          const num = parseDotNumber(e.target.value);
+                          const inputEl = e.target;
+                          const cursor = inputEl.selectionStart ?? inputEl.value.length;
+                          const digitsBeforeCursor = (
+                            inputEl.value.slice(0, cursor).match(/\d/g) || []
+                          ).length;
+                          const num = Number(parseDotNumber(inputEl.value) || 0);
                           setVariableSpendDraft(num > 0 ? formatWithDots(num) : "");
+
+                          requestAnimationFrame(() => {
+                            if (document.activeElement !== inputEl) {
+                              return;
+                            }
+                            const formatted = num > 0 ? formatWithDots(num) : "";
+                            preserveCaretAfterFormat(
+                              inputEl,
+                              digitsBeforeCursor,
+                              formatted,
+                            );
+                          });
                         }}
                         placeholder={isId ? "12.000.000" : "12.000"}
                         className="h-10 flex-1 rounded-[8px] px-3 font-sans text-[15px] bg-white/70 dark:bg-white/[0.04] border border-ink/12 dark:border-frost/12 outline-none"

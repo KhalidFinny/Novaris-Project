@@ -19,6 +19,11 @@
       "handle": "filesystem"
     },
     {
+      "src": "^/api/decision-center$",
+      "dest": "/api/decision-center",
+      "check": true
+    },
+    {
       "src": "^/api/delay$",
       "dest": "/api/delay",
       "check": true

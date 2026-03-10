@@ -1,6 +1,10 @@
 import { ReactNode } from "react";
 import type { DelayOutput, DelayInput } from "../../lib/engine/types";
 
+export type DelayFormState = {
+  [K in keyof DelayInput]: DelayInput[K] | "";
+};
+
 export interface PhaseChartSceneProps {
   data: DelayOutput | undefined;
   isPending: boolean;
@@ -22,21 +26,24 @@ export interface DelayProbabilitySceneProps {
 }
 
 export interface DelaySidebarProps {
-  form: DelayInput;
-  onFormChange: (f: DelayInput) => void;
+  form: DelayFormState;
+  onFormChange: (f: DelayFormState) => void;
   isPending: boolean;
   onRun?: () => void;
+  invalidFieldKeys?: Set<keyof DelayInput>;
 }
 
 export interface DelayFieldProps {
   label: string;
   fieldKey: keyof DelayInput;
-  form: DelayInput;
-  onChange: (f: DelayInput) => void;
+  form: DelayFormState;
+  onChange: (f: DelayFormState) => void;
   type?: "number" | "text" | "range";
   min?: number;
   max?: number;
   suffix?: string;
   info?: string | ReactNode;
   placeholder?: string;
+  invalid?: boolean;
+  errorText?: string;
 }

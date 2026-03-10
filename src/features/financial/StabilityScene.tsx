@@ -38,7 +38,7 @@ export function StabilityScene({
               className="font-fraunces block text-[120px] sm:text-[160px] font-normal tracking-[-0.05em] leading-[0.85] transition-colors duration-700"
               style={{ color: survivalColor }}
             >
-              {data ? "0%" : "—"}
+              {data ? `${Math.round(data.survivalProbability)}%` : "—"}
             </span>
             {data && (
               <div

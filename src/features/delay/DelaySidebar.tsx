@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "../../components/ui/Input";
 import { useLocale } from "../../hooks/useLocale";
 import type { DelayInput } from "../../lib/engine/types";
-import type { DelayFieldProps, DelaySidebarProps } from "./types";
+import type { DelayFieldProps, DelayFormState, DelaySidebarProps } from "./types";
 
 type SectionId = "scope" | "friction" | "buffer";
 
@@ -13,7 +13,7 @@ const formatWithDots = (value: number) =>
 
 const parseDotNumber = (value: string) => {
   const normalized = value.replace(/[^\d]/g, "");
-  if (!normalized) return 0;
+  if (!normalized) return "";
   return Number(normalized);
 };
 
@@ -26,9 +26,11 @@ function NumberField({
   info,
   placeholder,
   onBlur,
+  invalid,
+  errorText,
 }: DelayFieldProps & { onBlur?: () => void }) {
-  const raw = Number(form[fieldKey] || 0);
-  const display = raw > 0 ? formatWithDots(raw) : "";
+  const raw = form[fieldKey];
+  const display = raw === "" ? "" : typeof raw === "number" ? formatWithDots(raw) : "";
 
   return (
     <Input
@@ -40,8 +42,44 @@ function NumberField({
       info={info}
       placeholder={placeholder}
       onBlur={onBlur}
+      invalid={invalid}
+      errorText={errorText}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange({ ...form, [fieldKey]: parseDotNumber(e.target.value) });
+        const inputEl = e.target;
+        const cursor = inputEl.selectionStart ?? inputEl.value.length;
+        const digitsBeforeCursor = (
+          inputEl.value.slice(0, cursor).match(/\d/g) || []
+        ).length;
+
+        const parsed = parseDotNumber(inputEl.value);
+        onChange({ ...form, [fieldKey]: parsed } as DelayFormState);
+
+        requestAnimationFrame(() => {
+          if (document.activeElement !== inputEl) {
+            return;
+          }
+          const formatted =
+            parsed === "" ? "" : formatWithDots(Number(parsed));
+          if (!formatted) {
+            inputEl.setSelectionRange(0, 0);
+            return;
+          }
+
+          let digitSeen = 0;
+          let nextCursor = formatted.length;
+
+          for (let i = 0; i < formatted.length; i++) {
+            if (/\d/.test(formatted[i])) {
+              digitSeen += 1;
+            }
+            if (digitSeen >= Math.max(1, digitsBeforeCursor)) {
+              nextCursor = i + 1;
+              break;
+            }
+          }
+
+          inputEl.setSelectionRange(nextCursor, nextCursor);
+        });
       }}
     />
   );
@@ -57,6 +95,8 @@ function RangeField({
   suffix,
   info,
   onBlur,
+  invalid,
+  errorText,
 }: DelayFieldProps & { onBlur?: () => void }) {
   return (
     <Input
@@ -66,11 +106,13 @@ function RangeField({
       max={max}
       suffix={suffix}
       info={info}
-      value={Number(form[fieldKey] || 0)}
+      value={Number(form[fieldKey] === "" ? 0 : form[fieldKey])}
       onBlur={onBlur}
+      invalid={invalid}
+      errorText={errorText}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         const val = Number(e.target.value);
-        onChange({ ...form, [fieldKey]: Number.isFinite(val) ? val : 0 });
+        onChange({ ...form, [fieldKey]: Number.isFinite(val) ? val : "" } as DelayFormState);
       }}
     />
   );
@@ -89,7 +131,11 @@ interface SectionField {
 
 type SaveState = "saved" | "editing";
 
-export function DelaySidebar({ form, onFormChange }: DelaySidebarProps) {
+export function DelaySidebar({
+  form,
+  onFormChange,
+  invalidFieldKeys,
+}: DelaySidebarProps) {
   const { language, t } = useLocale();
   const isId = language === "id";
   const [saveState, setSaveState] = React.useState<SaveState>("saved");
@@ -205,7 +251,7 @@ export function DelaySidebar({ form, onFormChange }: DelaySidebarProps) {
     }, 450);
   };
 
-  const handleFormChange = (next: DelayInput) => {
+  const handleFormChange = (next: DelayFormState) => {
     markSavedSoon();
     onFormChange(next);
   };
@@ -218,7 +264,7 @@ export function DelaySidebar({ form, onFormChange }: DelaySidebarProps) {
     };
   }, []);
 
-  const isFilled = (fieldKey: keyof DelayInput) => Number(form[fieldKey] || 0) > 0;
+  const isFilled = (fieldKey: keyof DelayInput) => form[fieldKey] !== "";
 
   return (
     <div className="flex flex-col">
@@ -297,6 +343,12 @@ export function DelaySidebar({ form, onFormChange }: DelaySidebarProps) {
                   suffix={field.suffix}
                   info={field.info}
                   onBlur={() => setSaveState("saved")}
+                  invalid={Boolean(invalidFieldKeys?.has(field.fieldKey))}
+                  errorText={
+                    invalidFieldKeys?.has(field.fieldKey)
+                      ? t("validation.fieldRequired")
+                      : undefined
+                  }
                 />
               ) : (
                 <NumberField
@@ -309,6 +361,12 @@ export function DelaySidebar({ form, onFormChange }: DelaySidebarProps) {
                   info={field.info}
                   placeholder={field.placeholder}
                   onBlur={() => setSaveState("saved")}
+                  invalid={Boolean(invalidFieldKeys?.has(field.fieldKey))}
+                  errorText={
+                    invalidFieldKeys?.has(field.fieldKey)
+                      ? t("validation.fieldRequired")
+                      : undefined
+                  }
                 />
               ),
             )}

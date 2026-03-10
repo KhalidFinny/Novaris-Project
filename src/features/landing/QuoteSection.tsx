@@ -20,11 +20,7 @@ export function QuoteSection() {
               className="font-fraunces font-bold text-[56px] leading-[.7]
                          text-scarlet dark:text-scarlet-bright transition-colors duration-520"
               aria-hidden="true"
-            >
-              "
-            </div>
-
-            {/* Text + attribution */}
+            ></div>
             <div>
               <blockquote
                 className="font-fraunces font-light italic
@@ -33,15 +29,18 @@ export function QuoteSection() {
                            transition-colors duration-520"
                 style={{ fontSize: "clamp(24px, 3.2vw, 42px)" }}
               >
+                {" "}
+                "
                 {isId
-                  ? "Risiko bukan musuh ambisi."
-                  : "Risk isn't the enemy of ambition."}{" "}
+                  ? "Keputusan yang benar pun menjadi salah"
+                  : "Even a correct decision"}
                 <strong className="font-semibold not-italic text-scarlet dark:text-scarlet-bright">
-                  {isId ? "Risiko yang tidak dikelola adalah musuhnya." : "Unmanaged risk is."}
-                </strong>{" "}
-                {isId
-                  ? "Bisnis yang menang bukan yang menghindari risiko, tetapi yang memahaminya cukup baik untuk bergerak lebih cepat dari yang lain."
-                  : "The businesses that win aren't the ones that avoided risk — they're the ones who understood it well enough to move faster than everyone else."}
+                  {" "}
+                  {isId
+                    ? "jika diambil terlalu lambat."
+                    : "is wrong when it was taken too late."}
+                </strong>
+                "
               </blockquote>
               <div
                 className="flex items-center gap-2.5
@@ -53,8 +52,8 @@ export function QuoteSection() {
                   aria-hidden="true"
                 />
                 {isId
-                  ? "Aon Risk Solutions — Laporan Global Manajemen Risiko 2024"
-                  : "Aon Risk Solutions — 2024 Global Risk Management Report"}
+                  ? "Lee Iacocca — CEO Chrysler, Bapak Ford Mustang"
+                  : "Lee Iacocca — CEO of Chrysler, father of the Ford Mustang"}
               </div>
             </div>
           </div>

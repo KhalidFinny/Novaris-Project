@@ -17,6 +17,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: "text" | "number" | "range";
   suffix?: string;
   info?: string | ReactNode;
+  invalid?: boolean;
+  errorText?: string;
 }
 
 // Badge

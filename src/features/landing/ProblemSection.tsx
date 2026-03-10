@@ -28,7 +28,7 @@ export function ProblemSection() {
                 className="w-4 h-px bg-scarlet dark:bg-scarlet-bright shrink-0"
                 aria-hidden="true"
               />
-               {isId ? "Masalahnya" : "The problem"}
+              {isId ? "Masalahnya" : "The problem"}
             </div>
             <h2
               className="font-fraunces font-semibold
@@ -36,10 +36,10 @@ export function ProblemSection() {
                          transition-colors duration-520"
               style={{ fontSize: "clamp(36px, 4.5vw, 64px)" }}
             >
-               {isId ? "Banyak bisnis" : "Most businesses are"}{" "}
-               <em className="italic font-normal text-scarlet dark:text-scarlet-bright">
-                 {isId ? "berjalan tanpa visibilitas." : "flying blind."}
-               </em>
+              {isId ? "Banyak bisnis" : "Most businesses are"}{" "}
+              <em className="italic font-normal text-scarlet dark:text-scarlet-bright">
+                {isId ? "berjalan tanpa visibilitas." : "flying blind."}
+              </em>
             </h2>
             <p className="font-sans font-light text-base text-ink/70 dark:text-frost/70 leading-relaxed max-w-[40ch]">
               {isId
@@ -80,7 +80,7 @@ export function ProblemSection() {
         {/* 3-col flat problem cards */}
         <div
           className="grid grid-cols-1 md:grid-cols-3 gap-px
-                     bg-ink/9 dark:bg-frost/8
+                     bg-ink/9 dark:bg-white
                      border border-ink/9 dark:border-frost/8
                      rounded-card overflow-hidden"
         >

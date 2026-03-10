@@ -14,13 +14,7 @@ export function HeroSection() {
   const isId = language === "id";
 
   return (
-    <div
-      className="relative"
-      style={{
-        background:
-          "linear-gradient(180deg, rgba(244,247,251,1) 0%, rgba(241,245,250,1) 34%, rgba(238,243,249,1) 68%, rgba(236,241,248,1) 100%)",
-      }}
-    >
+    <div className="relative bg-bone">
       <Nav />
       {/* ── HERO ── */}
       <section
@@ -103,7 +97,7 @@ export function HeroSection() {
           }}
         >
           <Link
-            to="/financial"
+            to="/decision-center"
             className="font-sans font-semibold text-[11.5px] uppercase tracking-wider
                        px-7 py-3 rounded-card text-center no-underline
                        bg-scarlet dark:bg-scarlet-bright text-white
@@ -111,17 +105,17 @@ export function HeroSection() {
                        hover:-translate-y-0.5
                        transition-all duration-200 ease-spring border-0 cursor-pointer"
           >
-            {isId ? "Stress Test Finansial" : "Financial Stress Test"}
+            {isId ? "Masuk Pusat Keputusan" : "Enter Decision Center"}
           </Link>
-          <Link
-            to="/delay"
+          <a
+            href="#how-it-works"
             className="font-sans font-semibold text-[11.5px] uppercase tracking-wider
                        px-7 py-3 rounded-card border border-scarlet-dark text-black dark:text-frost/50 text-center
                        hover:-translate-y-0.5 no-underline
                        transition-all duration-200 ease-spring cursor-pointer"
           >
-            {isId ? "Simulasi Delay" : "Delay Simulation"}
-          </Link>
+            {isId ? "Lihat Cara Kerja" : "See How It Works"}
+          </a>
         </div>
 
         {/* Stat strip */}
@@ -136,27 +130,27 @@ export function HeroSection() {
         >
           {[
             {
-              stat: "50%",
+              stat: "82%",
               label: isId
-                ? "bisnis gagal sebelum tahun kelima"
-                : "of businesses fail by year five",
+                ? "bisnis gagal karena masalah arus kas"
+                : "of businesses fail due to cash flow problems",
               src: isId
-                ? "Biro Statistik Tenaga Kerja AS"
-                : "US Bureau of Labor Statistics",
+                ? "Studi Bank AS via SCORE"
+                : "U.S. Bank Study via SCORE",
             },
             {
-              stat: "73%",
+              stat: "62%",
               label: isId
-                ? "menyebut ketidakpastian ekonomi sebagai risiko utama"
-                : "cite economic uncertainty as #1 risk",
-              src: "Gitnux Report 2024",
+                ? "SMB memiliki pembayaran terlambat"
+                : "of SMBs currently owed late payments",
+              src: "Intuit QuickBooks, 2025",
             },
             {
-              stat: "11%",
+              stat: "32",
               label: isId
-                ? "mengelola risiko secara strategis"
-                : "use risk management strategically",
-              src: "PwC Pulse Survey 2024",
+                ? "hari rata-rata keterlambatan pembayaran"
+                : "days average payment delay",
+              src: "Coface UK, 2025",
             },
           ].map((item, i) => (
             <div

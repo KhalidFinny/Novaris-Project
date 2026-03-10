@@ -55,37 +55,67 @@ export const DAY_ONE_FEATURES_ID: DayOneFeature[] = [
 // Stats for the Problem section stat rows
 export const STATS: Stat[] = [
     {
-        stat: '87%',
-        label: 'of risk professionals say processes aren\'t acted on inside their company.',
-        src: 'Gitnux Risk Management Report',
+        stat: '82%',
+        label: 'of businesses fail due to cash flow problems.',
+        src: 'U.S. Bank Study via SCORE',
     },
     {
-        stat: '33%',
-        label: 'of organizations have no Chief Risk Officer — leaving decisions to chance.',
-        src: 'Gitnux Risk Management Report',
+        stat: '62%',
+        label: 'of SMBs are currently owed late payments.',
+        src: 'Intuit QuickBooks, 2025',
     },
     {
-        stat: '40%',
-        label: 'of executives cite cyber attacks as serious risk, yet most SMBs lack a response plan.',
-        src: 'PwC Pulse Survey 2024',
+        stat: '90%',
+        label: 'of small businesses face a financial or operational challenge each year.',
+        src: 'Federal Reserve SBCS, 2024',
+    },
+    {
+        stat: '60%',
+        label: 'of SMBs cite cash flow as their biggest challenge.',
+        src: 'PYMNTS Intelligence, 2024',
+    },
+    {
+        stat: '32',
+        label: 'days is the average payment delay.',
+        src: 'Coface UK Payment Survey, 2025',
+    },
+    {
+        stat: '80%',
+        label: 'of Cost of Delay is caused by waiting time.',
+        src: 'Black Swan Farming / Lean Institute',
     },
 ];
 
 export const STATS_ID: Stat[] = [
     {
-        stat: '87%',
-        label: 'praktisi risiko mengatakan proses risiko tidak ditindaklanjuti di dalam perusahaan.',
-        src: 'Laporan Manajemen Risiko Gitnux',
+        stat: '82%',
+        label: 'bisnis gagal karena masalah arus kas.',
+        src: 'Studi Bank AS via SCORE',
     },
     {
-        stat: '33%',
-        label: 'organisasi tidak memiliki Chief Risk Officer sehingga keputusan sering dibiarkan kebetulan.',
-        src: 'Laporan Manajemen Risiko Gitnux',
+        stat: '62%',
+        label: 'SMB saat ini memiliki pembayaran terlambat yang belum diterima.',
+        src: 'Intuit QuickBooks, 2025',
     },
     {
-        stat: '40%',
-        label: 'eksekutif menyebut serangan siber sebagai risiko serius, namun banyak SMB belum punya rencana respons.',
-        src: 'PwC Pulse Survey 2024',
+        stat: '90%',
+        label: 'bisnis kecil menghadapi tantangan finansial atau operasional setiap tahun.',
+        src: 'Federal Reserve SBCS, 2024',
+    },
+    {
+        stat: '60%',
+        label: 'SMB menyebut arus kas sebagai tantangan terbesar.',
+        src: 'PYMNTS Intelligence, 2024',
+    },
+    {
+        stat: '32',
+        label: 'hari adalah rata-rata keterlambatan pembayaran.',
+        src: 'Coface UK Payment Survey, 2025',
+    },
+    {
+        stat: '80%',
+        label: 'dari Biaya Keterlambatan disebabkan oleh waktu tunggu.',
+        src: 'Black Swan Farming / Lean Institute',
     },
 ];
 
@@ -139,28 +169,6 @@ export const FEATURES_ID: Feature[] = [
     { n: '03', label: 'Engine Kepatuhan', desc: 'Monitoring berkelanjutan yang menangkap deviasi sebelum membesar.' },
     { n: '04', label: 'Routing Alert Pintar', desc: 'Hanya sinyal penting, dikirim ke orang yang tepat.' },
     { n: '05', label: 'Pemodelan Skenario', desc: 'Satu delay, dampak finansial penuh - Cascade Effect engine.' },
-];
-
-export const FEATURE_TAGS: string[] = [
-    'Integrations',
-    'API Access',
-    'Team Collaboration',
-    'Custom Dashboards',
-    'Incident Playbooks',
-    'Audit Trails',
-    'Role-based Access',
-    'Mobile Ready',
-];
-
-export const FEATURE_TAGS_ID: string[] = [
-    'Integrasi',
-    'Akses API',
-    'Kolaborasi Tim',
-    'Dashboard Kustom',
-    'Playbook Insiden',
-    'Jejak Audit',
-    'Akses Berbasis Peran',
-    'Siap Mobile',
 ];
 
 export const BENEFITS: Benefit[] = [

@@ -1,13 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FEATURES, FEATURES_ID, FEATURE_TAGS, FEATURE_TAGS_ID } from "./data";
+import { FEATURES, FEATURES_ID } from "./data";
 import { useLocale } from "../../hooks/useLocale";
 
 export function SolutionSection() {
   const { language } = useLocale();
   const isId = language === "id";
   const features = isId ? FEATURES_ID : FEATURES;
-  const tags = isId ? FEATURE_TAGS_ID : FEATURE_TAGS;
 
   return (
     <section
@@ -28,7 +27,7 @@ export function SolutionSection() {
                 className="w-4 h-px bg-scarlet dark:bg-scarlet-bright shrink-0"
                 aria-hidden="true"
               />
-               {isId ? "Solusi" : "The solution"}
+              {isId ? "Solusi" : "The solution"}
             </div>
             <h2
               className="font-fraunces font-semibold
@@ -96,24 +95,6 @@ export function SolutionSection() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Chip scroll strip */}
-        <div className="flex overflow-x-auto gap-2 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {tags.map((tag, i) => (
-            <div
-              key={i}
-              className="chip flex-none font-mono text-[9.5px] tracking-widest uppercase
-                         text-ink/50 dark:text-frost/50 py-1.75 px-3.5
-                         rounded-card border border-ink/9 dark:border-frost/8
-                         bg-transparent whitespace-nowrap cursor-pointer
-                         hover:bg-scarlet dark:hover:bg-scarlet-bright hover:text-white
-                         hover:border-scarlet dark:hover:border-scarlet-bright
-                         transition-all duration-200 ease-spring"
-            >
-              {tag}
-            </div>
-          ))}
         </div>
       </div>
     </section>
