@@ -50,4 +50,7 @@ secrets.json
 ehthumbs.db
 Thumbs.db
 
+# Vercel build output
+.vercel/
+
 
