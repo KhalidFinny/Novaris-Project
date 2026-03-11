@@ -87,8 +87,8 @@ export function ProblemSection() {
           {problems.map((p, i) => (
             <div
               key={i}
-              className="bg-arctic dark:bg-void p-8 cursor-default
-                         hover:bg-arctic-soft dark:hover:bg-void-soft
+              className="bg-bone dark:bg-void p-8 cursor-default
+                         hover:bg-bone-soft dark:hover:bg-void-soft
                          transition-colors duration-200 ease-spring"
             >
               <div

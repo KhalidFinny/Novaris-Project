@@ -51,8 +51,8 @@ export function BenefitsSection() {
           {benefits.map((b, i) => (
             <div
               key={i}
-              className={`ben-card group relative bg-arctic-soft dark:bg-void-soft p-8 cursor-pointer overflow-hidden
-                          hover:bg-arctic dark:hover:bg-void transition-colors duration-200 ease-spring`}
+              className={`ben-card group relative bg-bone-soft dark:bg-void-soft p-8 cursor-pointer overflow-hidden
+                          hover:bg-bone dark:hover:bg-void transition-colors duration-200 ease-spring`}
             >
               {/* Top accent bar */}
               <div

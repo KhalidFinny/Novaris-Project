@@ -153,7 +153,7 @@ export function CtaSection() {
       <footer
         className="px-13 py-7
                    border-t border-ink/9 dark:border-frost/8
-                   bg-arctic dark:bg-void
+                   bg-bone dark:bg-void
                    flex items-center justify-between flex-wrap gap-3
                    transition-colors duration-520 ease-spring
                    max-sm:px-6"

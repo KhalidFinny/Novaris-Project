@@ -44,7 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   </button>
                 )}
                 {showInfo && info && (
-                  <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-arctic text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
+                  <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-bone text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
                     {info}
                   </div>
                 )}
@@ -98,7 +98,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 </button>
               )}
               {showInfo && info && (
-                <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-arctic text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
+                <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-bone text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
                   {info}
                 </div>
               )}

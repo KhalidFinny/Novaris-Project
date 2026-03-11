@@ -94,7 +94,7 @@ export function PricingSection() {
                             ${
                               plan.popular
                                 ? "bg-scarlet/7 dark:bg-scarlet-bright/9 hover:bg-scarlet/10 dark:hover:bg-scarlet-bright/12"
-                                : "bg-arctic-soft dark:bg-void-soft hover:bg-arctic dark:hover:bg-void"
+                                : "bg-bone-soft dark:bg-void-soft hover:bg-bone dark:hover:bg-void"
                             }`}
               >
                 <div>

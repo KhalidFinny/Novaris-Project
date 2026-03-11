@@ -10,7 +10,7 @@ export function StabilityScene({
   language = "en",
 }: StabilitySceneProps) {
   return (
-    <article className="px-8 sm:px-12 py-16 border-b border-ink/5 dark:border-frost/5 relative overflow-hidden bg-arctic dark:bg-void">
+    <article className="px-8 sm:px-12 py-16 border-b border-ink/5 dark:border-frost/5 relative overflow-hidden bg-bone dark:bg-void">
       {/* Soft Background Gradient */}
       <div className="absolute top-0 right-0 w-full max-w-2xl h-full pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(164,22,36,0.03),transparent_70%)]" />
 
