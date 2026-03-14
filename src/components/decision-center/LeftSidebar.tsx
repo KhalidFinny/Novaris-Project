@@ -152,7 +152,7 @@ export function LeftSidebar({
           isOpen
             ? "left-0 bottom-0 top-18 w-[85%] max-w-[360px] lg:rounded-none"
             : "-left-full bottom-0 top-18 w-[85%] max-w-[360px]"
-        } shadow-2xl overflow-hidden`}
+        } overflow-hidden`}
       >
         {isOpen && (
           <div className="h-full flex flex-col ">
