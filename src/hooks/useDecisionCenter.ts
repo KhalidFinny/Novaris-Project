@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useLocale } from "./useLocale";
 import type {
   AllInputs,
   DecisionCenterData,
@@ -120,6 +121,46 @@ export function useDecisionCenter(language: "en" | "id") {
       essentials: { ...prev.essentials, ...values },
     }));
   }, [setInputs]);
+
+  const { currency, convertAmount } = useLocale();
+  const prevCurrencyRef = useRef(currency);
+
+  useEffect(() => {
+    if (prevCurrencyRef.current !== currency) {
+      const oldCurrency = prevCurrencyRef.current;
+      const newCurrency = currency;
+
+      setInputs((prev) => {
+        const convert = (val: string | number) => {
+          if (val === "" || val === undefined) return "";
+          return convertAmount(Number(val), oldCurrency, newCurrency);
+        };
+
+        return {
+          ...prev,
+          essentials: {
+            ...prev.essentials,
+            cashInBank: convert(prev.essentials.cashInBank),
+            monthlyBills: convert(prev.essentials.monthlyBills),
+            monthlyRevenue: convert(prev.essentials.monthlyRevenue),
+            monthlyRevenueTarget: convert(prev.essentials.monthlyRevenueTarget ?? ""),
+          },
+          delayRisk: {
+            ...prev.delayRisk,
+            paymentAtRisk: convert(prev.delayRisk.paymentAtRisk),
+          },
+          scenario: {
+            ...prev.scenario,
+            cashInjection: convert(prev.scenario.cashInjection),
+            overheadReduction: convert(prev.scenario.overheadReduction),
+            newRevenue30d: convert(prev.scenario.newRevenue30d),
+          },
+        };
+      });
+
+      prevCurrencyRef.current = currency;
+    }
+  }, [currency, convertAmount, setInputs]);
 
   const updateDelayRisk = useCallback((values: Partial<DelayRiskInputs>) => {
     setInputs((prev) => ({

@@ -7,40 +7,40 @@ export const buildAnalysisText = (category: string, scoreValue: number, trend: s
   const categoryKey = getCategoryKey(category);
   const direction =
     trend === "worsening"
-      ? isId ? "naik" : "moving up"
+      ? (isId ? "sedang naik" : "is going up")
       : trend === "improving"
-        ? isId ? "turun" : "moving down"
-        : isId ? "stabil" : "holding steady";
+        ? (isId ? "mulai turun" : "is starting to drop")
+        : (isId ? "masih stabil" : "is holding steady");
 
   const label = getScoreLabel(scoreValue, isId).toLowerCase();
 
   if (categoryKey === "cash") {
     return isId
-      ? `Sistem membaca bantalan kas Anda sebagai ${label}. Risiko kas sedang ${direction}, jadi fokus utama adalah apakah runway masih cukup untuk menyerap satu gangguan tambahan.`
-      : `The system reads your cash buffer as ${label}. Cash risk is ${direction}, so the key question is whether runway can absorb one more shock.`;
+      ? `Tabungan kas Anda saat ini dalam kondisi ${label}. Risikonya ${direction}, jadi pertanyaannya: apakah uang yang ada sekarang cukup kalau tiba-tiba ada pengeluaran tak terduga?`
+      : `Your cash savings look ${label} right now. The risk level ${direction}, so the main thing to watch is whether you have enough to handle a surprise expense.`;
   }
 
   if (categoryKey === "revenue") {
     return isId
-      ? `Skor ini berasal dari jarak antara pemasukan dan kebutuhan bulanan. Sistem melihat apakah gap tersebut masih aman, mulai menekan margin, atau sudah mengganggu ritme bisnis.`
-      : `This score comes from the distance between incoming revenue and your monthly requirement. The system checks whether that gap is still safe, starting to squeeze margin, or already disrupting the business rhythm.`;
+      ? `Skor ini melihat selisih antara pemasukan bulanan dan biaya hidup bisnis Anda. Kami memantau apakah jaraknya masih aman atau sudah mulai mepet sehingga mengganggu operasional.`
+      : `This score looks at the gap between your monthly income and your business bills. We're checking if that gap is still safe or getting too tight for comfort.`;
   }
 
   if (categoryKey === "client") {
     return isId
-      ? `Sistem membaca seberapa rapuh bisnis jika satu klien berubah perilaku. Semakin tinggi skor, semakin besar ketergantungan pada satu sumber pendapatan.`
-      : `The system reads how fragile the business becomes if one client changes behavior. The higher the score, the more concentrated income is around a single source.`;
+      ? `Hal ini menunjukkan seberapa bahaya bisnis Anda kalau klien terbesar tiba-tiba pergi atau berhenti bayar. Semakin tinggi skornya, berarti Anda terlalu bergantung pada satu orang saja.`
+      : `This shows how much danger your business is in if your biggest customer suddenly leaves. A higher score means you're leaning too much on just one source of income.`;
   }
 
   if (categoryKey === "delay") {
     return isId
-      ? `Skor ini melihat apakah keterlambatan proyek bisa berubah menjadi tekanan kas. Fokusnya adalah seberapa mudah jadwal yang bergeser ikut menahan pembayaran masuk.`
-      : `This score checks whether delivery delays can turn into cash pressure. The focus is how easily a slipping schedule starts holding back incoming payments.`;
+      ? `Skor ini memantau apakah keterlambatan kerja bisa langsung bikin kantong kering. Intinya: seberapa mudah jadwal yang molor mengganggu aliran uang masuk Anda.`
+      : `This score checks if project delays might lead to a cash crunch. Basically: how easily a slipping schedule starts blocking your incoming payments.`;
   }
 
   return isId
-    ? `Ini adalah skor gabungan yang merangkum area risiko paling dominan saat ini. Tujuannya memberi pembacaan cepat atas posisi bisnis Anda secara keseluruhan.`
-    : `This is a blended score summarizing the dominant risk areas right now. Its job is to give a quick read on the overall business position.`;
+    ? `Ini adalah skor gabungan yang merangkum kondisi bisnis Anda secara keseluruhan saat ini, supaya Anda bisa melihat gambaran besarnya dengan cepat.`
+    : `This is a combined score that summarizes your overall business health right now, so you can see the big picture at a glance.`;
 };
 
 export const buildCalculationText = (category: string, scenarioOutput: any, isId: boolean) => {
@@ -48,31 +48,31 @@ export const buildCalculationText = (category: string, scenarioOutput: any, isId
 
   if (categoryKey === "cash") {
     return isId
-      ? `Runway proyeksi: ${scenarioOutput?.projectedRunway ?? "?"} hari, perubahan skenario: ${scenarioOutput?.runwayDelta && scenarioOutput.runwayDelta > 0 ? "+" : ""}${scenarioOutput?.runwayDelta ?? 0} hari.`
-      : `Projected runway: ${scenarioOutput?.projectedRunway ?? "?"} days, scenario change: ${scenarioOutput?.runwayDelta && scenarioOutput.runwayDelta > 0 ? "+" : ""}${scenarioOutput?.runwayDelta ?? 0} days.`;
+      ? `Berdasarkan pengeluaran Anda, uang di bank akan habis dalam ${scenarioOutput?.projectedRunway ?? "?"} hari. Perubahan skenario ini menambah napas bisnis Anda selama ${scenarioOutput?.runwayDelta ?? 0} hari.`
+      : `Based on your spending, your cash will last about ${scenarioOutput?.projectedRunway ?? "?"} days. This scenario adds ${scenarioOutput?.runwayDelta ?? 0} days of "breathing room" for your business.`;
   }
 
   if (categoryKey === "revenue") {
     return isId
-      ? `Perhitungan berbasis selisih pendapatan terhadap target/break-even, lalu dibobotkan untuk melihat seberapa cepat gap itu bisa berubah menjadi tekanan.`
-      : `Calculated from the revenue gap versus target/break-even, then weighted to show how quickly that gap can turn into pressure.`;
+      ? `Dihitung dari selisih antara apa yang Anda dapatkan vs apa yang harus dibayar. Kami memantau seberapa cepat kekurangan uang ini bisa bikin bisnis goyang.`
+      : `Calculated from the difference between what you earn vs what you owe. We're tracking how quickly this gap could put pressure on your business.`;
   }
 
   if (categoryKey === "client") {
     return isId
-      ? `Semakin besar porsi klien terbesar, semakin tinggi penalti konsentrasi. Sistem menaikkan skor ketika satu klien terlalu dominan.`
-      : `The larger the biggest-client share, the higher the concentration penalty. The score rises when one client dominates too much of income.`;
+      ? `Semakin besar porsi satu klien dalam pendapatan Anda, semakin bahaya posisinya. Kami memberikan tanda bahaya jika ada satu orang yang terlalu mengontrol keuangan Anda.`
+      : `The more one customer pays you, the riskier it gets. We raise a flag when one person has too much control over your total income.`;
   }
 
   if (categoryKey === "delay") {
     return isId
-      ? `Skor delay menggabungkan buffer waktu, pembayaran yang tertahan, dan tekanan operasional untuk membaca peluang gangguan ikut memukul kas.`
-      : `Delay risk combines time buffer, blocked payment, and operational strain to read how likely disruption is to hit cash too.`;
+      ? `Kami menghitung seberapa kuat "cadangan waktu" Anda dan bagaimana keterlambatan bayar dari klien bisa langsung memacetkan kas bisnis.`
+      : `We calculate how much "time buffer" you have and how a late payment from a client could immediately lock up your business cash.`;
   }
 
   return isId
-    ? `Skor keseluruhan merangkum bobot kas, pendapatan, delay, dan konsentrasi klien ke dalam satu angka akhir.`
-    : `The overall score blends cash, revenue, delay, and client concentration into one final number.`;
+    ? `Skor ini menggabungkan semua faktor (kas, pemasukan, ketergantungan klien, dan delay) untuk memberikan nilai akhir kesehatan bisnis Anda.`
+    : `This score blends all factors (cash, income, client dependency, and delays) to give a final "health check" number for your business.`;
 };
 
 export const generateSuggestions = (category: string, score: number, isId: boolean) => {
@@ -81,62 +81,62 @@ export const generateSuggestions = (category: string, score: number, isId: boole
   if (categoryKey === "cash") {
     if (score >= 70) {
       return isId 
-        ? "Runway sangat singkat. Segera cari dana tambahan atau kurangi biaya operasional drastis. Prioritas: kelangsungan hidup."
-        : "Runway is very short. Find additional funding or drastically reduce operational costs immediately. Priority: survival.";
+        ? "Waktu Anda sangat mepet. Segera cari suntikan dana atau potong biaya yang tidak penting hari ini juga. Fokus utama: pastikan bisnis tetap hidup."
+        : "Your time is running out. Find extra funds or cut non-essential costs immediately. Main focus: making sure the business survives.";
     } else if (score >= 40) {
       return isId
-        ? "Runway menipis. Evaluasi pengeluaran yang bisa ditunda dan percepat koleksi piutang."
-        : "Runway is thinning. Evaluate deferrable expenses and accelerate receivables collection.";
+        ? "Persediaan uang mulai menipis. Coba cek lagi biaya apa yang bisa ditunda dan tagih klien yang belum bayar secepatnya."
+        : "Cash is getting tight. Look for expenses you can delay and follow up with clients who haven't paid yet.";
     } else {
       return isId
-        ? "Posisi kas sehat. Pertahankan buffer minimal 3 bulan dan pertimbangkan investasi untuk pertumbuhan."
-        : "Cash position is healthy. Maintain a minimum 3-month buffer and consider investing in growth.";
+        ? "Posisi uang Anda aman. Usahakan punya cadangan buat 3 bulan ke depan agar lebih tenang saat ingin mengembangkan bisnis."
+        : "Your cash position is healthy. Try to keep a 3-month buffer so you can feel safe while growing your business.";
     }
   }
   if (categoryKey === "revenue") {
     if (score >= 70) {
       return isId
-        ? "Defisit pendapatan signifikan. Cari sumber pendapatan baru atau tingkatkan harga layanan."
-        : "Significant revenue deficit. Find new revenue sources or increase service prices.";
+        ? "Pemasukan jauh di bawah pengeluaran. Anda butuh sumber pendapatan baru atau coba naikkan harga layanan Anda."
+        : "Your income is way below your bills. You need new ways to make money or consider raising your prices.";
     } else if (score >= 40) {
       return isId
-        ? "Pendapatan hampir mencukupi. Fokus pada retensi klien dan upselling."
-        : "Revenue is almost sufficient. Focus on client retention and upselling.";
+        ? "Pemasukan hampir cukup buat nutup biaya. Fokus jaga hubungan dengan klien yang ada dan tawarkan layanan tambahan."
+        : "Income is almost enough to cover bills. Focus on keeping your current clients happy and look for extra work with them.";
     } else {
       return isId
-        ? "Pendapatan melebihi target. Bagus! Pertimbangkan diversifikasi untuk mengurangi risiko."
-        : "Revenue exceeds target. Great! Consider diversification to reduce risk.";
+        ? "Bagus! Pemasukan sudah lebih dari cukup. Mulai pikirkan cara lain buat cari uang supaya tidak tergantung di satu tempat saja."
+        : "Great! You're making more than you spend. Start thinking about diversifying your income so you're not stuck with just one source.";
     }
   }
   if (categoryKey === "client") {
     if (score >= 70) {
       return isId
-        ? "Ketergantungan ekstrem pada satu klien. Prioritas: cari 2-3 klien baru segera."
-        : "Extreme dependency on one client. Priority: find 2-3 new clients immediately.";
+        ? "Sangat bahaya karena terlalu tergantung pada satu klien. Wajib cari 2-3 klien baru sekarang juga supaya tidak gampang tumbang."
+        : "Very risky to depend this much on one client. You must find 2-3 new customers immediately so you're not easily affected if one leaves.";
     } else if (score >= 40) {
       return isId
-        ? "Ketergantungan tinggi. Mulai pipeline untuk mengurangi risiko kehilangan klien utama."
-        : "High dependency. Start pipeline to reduce risk of losing main client.";
+        ? "Ketergantungan cukup tinggi. Mulai cari calon klien baru dari sekarang buat jaga-jaga kalau klien utama Anda berhenti."
+        : "Dependency is high. Start looking for new potential clients now as a backup in case your main one stops.";
     } else {
       return isId
-        ? "Portofolio klien seimbang. Pertahankan diversifikasi ini."
-        : "Client portfolio is balanced. Maintain this diversification.";
+        ? "Bagus, klien Anda sudah beragam. Pertahankan kondisi ini supaya bisnis tetap stabil."
+        : "Good, your client list is well-balanced. Keep it this way to stay stable.";
     }
   }
   if (categoryKey === "delay") {
     if (score >= 70) {
       return isId
-        ? "Risiko delay sangat tinggi. Siapkan buffer kas ekstra atau renegosiasi timeline."
-        : "Delay risk is very high. Prepare extra cash buffer or renegotiate timeline.";
+        ? "Risiko molor sangat tinggi. Siapkan dana cadangan ekstra atau coba bicarakan ulang jadwalnya dengan klien."
+        : "High risk of delays. Prepare some extra cash as a backup or talk to your client about adjusting the schedule.";
     } else if (score >= 40) {
       return isId
-        ? "Delay berpotensi terjadi. Monitor proyek ketat dan komunikasikan risiko ke klien."
-        : "Delay is likely. Monitor project closely and communicate risk to client.";
+        ? "Ada potensi keterlambatan. Pantau terus progresnya dan komunikasikan risikonya ke klien dari awal."
+        : "Delays are possible. Keep a close eye on progress and let your client know about any risks early on.";
     } else {
       return isId
-        ? "Proyek on track. Pertahankan komunikasi reguler dengan tim."
-        : "Project is on track. Maintain regular communication with team.";
+        ? "Proyek berjalan lancar. Tetap jaga komunikasi yang rutin dengan tim Anda."
+        : "Project is on track. Keep talking regularly with your team.";
     }
   }
-  return isId ? "Pantau metrik ini secara berkala." : "Monitor this metric regularly.";
+  return isId ? "Pantau terus angka-angka ini ya." : "Keep a close eye on these numbers.";
 };

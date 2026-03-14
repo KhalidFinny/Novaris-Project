@@ -61,8 +61,8 @@ export function AnalysisPanels({
         </h2>
         <p className="font-sans text-[14px] text-ink/66 dark:text-frost/72">
           {isId 
-            ? "Pembahasan mendalam tentang skor risiko Anda dan rekomendasi tindakan."
-            : "Deep dive into your risk scores and recommended actions."
+            ? "Melihat lebih dalam apa yang bikin skor risiko Anda naik dan apa yang bisa kita perbaiki."
+            : "A closer look at what's driving your risk scores and how we can fix it."
           }
         </p>
       </div>
@@ -94,14 +94,14 @@ export function AnalysisPanels({
                           label={score.category} 
                           help={
                             score.category.toLowerCase().includes("overall") 
-                              ? (isId ? "Gabungan semua risiko utama bisnis Anda." : "A weighted blend of all your primary business risks.")
+                              ? (isId ? "Rangkuman semua risiko utama bisnis Anda sekarang." : "A quick wrap-up of all your main business risks right now.")
                               : score.category.toLowerCase().includes("cash")
-                                ? (isId ? "Seberapa tahan posisi uang Anda terhadap guncangan mendadak." : "How resilient your cash position is against sudden shocks.")
+                                ? (isId ? "Seberapa aman cadangan uang Anda buat nahan masalah mendadak." : "How safe your cash savings are against sudden surprises.")
                                 : score.category.toLowerCase().includes("revenue") || score.category.toLowerCase().includes("market")
-                                  ? (isId ? "Stabilitas pemasukan Anda terhadap target atau operasional." : "The stability of your income against targets or operations.")
+                                  ? (isId ? "Apakah pemasukan Anda masih cukup buat bayar tagihan bisnis." : "Whether your income is still enough to cover your business bills.")
                                   : score.category.toLowerCase().includes("client")
-                                    ? (isId ? "Tingkat risiko dari ketergantungan pada klien tertentu." : "Risk level stemming from dependency on specific clients.")
-                                    : (isId ? "Risiko dari jadwal yang bergeser dan pembayaran tertahan." : "Risk from shifting schedules and withheld payments.")
+                                    ? (isId ? "Risiko kalau Anda cuma tergantung sama satu klien saja." : "The danger of leaning too much on just one client.")
+                                    : (isId ? "Risiko kalau jadwal kerja molor dan pembayaran jadi tertahan." : "Risk of schedules slipping and blocking your incoming payments.")
                           }
                         />
                       </span>

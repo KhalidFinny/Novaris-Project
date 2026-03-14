@@ -344,7 +344,7 @@ function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"], l
         triggerCondition: language === "id" ? "Buffer kas tipis" : "Thin cash buffer",
         triggerValue: `${kpi.cashRunway.baseRunway} days`,
         effect: language === "id" ? "Tekanan pengiriman" : "Delivery pressure",
-        effectDescription: language === "id" ? "Kas yang tipis menyisakan lebih sedikit ruang untuk menyerap keterlambatan proyek atau menambah bantuan darurat." : "Low cash leaves less room to absorb project slippage or add emergency help.",
+        effectDescription: language === "id" ? "Bantalan kas yang tipis menyisakan lebih sedikit ruang untuk menahan proyek yang telat atau menambah bantuan darurat." : "Thin cash leaves less room to absorb project slippage or add emergency help.",
       isActive: true,
     });
   }
@@ -405,8 +405,8 @@ function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"], 
   } else {
     nodes.push({
       step: 2,
-        label: language === "id" ? "Setiap pembayaran klien yang telat lebih cepat terasa" : "Any late customer payment hurts faster",
-        impact: language === "id" ? "Buffer yang lebih kecil berarti waktu koreksi juga lebih sempit" : "Less buffer means less time to correct course",
+        label: language === "id" ? "Tabungan kas tipis bikin risiko makin bahaya" : "Thin cash makes risks more dangerous",
+        impact: language === "id" ? "Pemasukan mepet dan terlalu bergantung pada satu klien" : "Small income gap and high client dependency",
       color: "amber",
     });
   }

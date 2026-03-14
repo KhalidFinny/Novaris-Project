@@ -74,8 +74,8 @@ export function LeftSidebar({
 
   const InfoBadge = ({ text }: { text: string }) => (
     <span className="group relative inline-flex items-center">
-      <Info size={12} className="text-ink/40 dark:text-frost/48" />
-      <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 w-52 -translate-x-1/2 rounded-xl border border-ink/6 bg-bone px-3 py-2 text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
+      <Info size={13} className="text-ink/30 dark:text-frost/36 cursor-help transition-colors group-hover:text-scarlet group-hover:dark:text-scarlet-bright" />
+      <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full z-50 mb-3 w-[260px] rounded-xl border border-ink/10 bg-bone/95 px-4 py-3 font-sans text-[12px] leading-relaxed text-ink/80 opacity-0 shadow-xl backdrop-blur-md transition-all duration-200 group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft/95 dark:text-frost/82">
         {text}
       </span>
     </span>
@@ -216,40 +216,7 @@ export function LeftSidebar({
                     id="sidebar-currency"
                     value={currency}
                     onChange={(e) => {
-                      const newCurrency = e.target.value as typeof currency;
-                      const oldCurrency = currency;
-
-                      const convert = (val: string | number) => {
-                        if (val === "") return "";
-                        return convertAmount(
-                          Number(val),
-                          oldCurrency,
-                          newCurrency,
-                        );
-                      };
-
-                      if (inputs.essentials) {
-                        onUpdateEssentials({
-                          cashInBank: convert(inputs.essentials.cashInBank),
-                          monthlyBills: convert(inputs.essentials.monthlyBills),
-                          monthlyRevenue: convert(
-                            inputs.essentials.monthlyRevenue,
-                          ),
-                          monthlyRevenueTarget: convert(
-                            inputs.essentials.monthlyRevenueTarget ?? "",
-                          ),
-                        });
-                      }
-
-                      if (inputs.delayRisk) {
-                        onUpdateDelayRisk({
-                          paymentAtRisk: convert(
-                            inputs.delayRisk.paymentAtRisk,
-                          ),
-                        });
-                      }
-
-                      setCurrency(newCurrency);
+                      setCurrency(e.target.value as typeof currency);
                     }}
                     className="min-w-[120px] rounded-full border border-ink/8 bg-transparent px-3 py-2 font-sans text-[13px] text-ink dark:bg-charcoal-soft dark:text-frost outline-none dark:border-frost/10"
                   >
@@ -310,13 +277,13 @@ export function LeftSidebar({
                     >
                       <span className="inline-flex items-center gap-1.5">
                         {isId
-                          ? "Uang di bank saat ini"
-                          : "Cash in your bank right now"}
+                          ? "Saldo Kas Sekarang"
+                          : "Actual Cash in Bank"}
                         <InfoBadge
                           text={
                             isId
-                              ? "Hanya uang yang benar-benar bisa Anda pakai hari ini."
-                              : "Only money you can actually use today."
+                              ? "Total uang tunai yang benar-benar ada di tangan dan siap pakai. Jangan hitung uang yang masih ditunggu pembayarannya."
+                              : "The total cash you can spend right now. Don't include money you're still waiting for from customers."
                           }
                         />
                       </span>
@@ -348,13 +315,13 @@ export function LeftSidebar({
                     >
                       <span className="inline-flex items-center gap-1.5">
                         {isId
-                          ? "Tagihan wajib per bulan"
-                          : "Monthly bills you MUST pay"}
+                          ? "Pengeluaran Pasti Bulanan"
+                          : "Regular Monthly Bills"}
                         <InfoBadge
                           text={
                             isId
-                              ? "Biaya yang tetap jalan walau penjualan berhenti."
-                              : "Bills that keep happening even if sales stop."
+                              ? "Uang yang harus keluar tiap bulan (Gaji, sewa, dll) supaya bisnis tetap jalan, meskipun tidak ada jualan."
+                              : "The money you must pay every month (Rent, salaries, software) just to keep the business running, even if you make zero sales."
                           }
                         />
                       </span>
@@ -391,13 +358,13 @@ export function LeftSidebar({
                     >
                       <span className="inline-flex items-center gap-1.5">
                         {isId
-                          ? "Uang masuk per bulan"
-                          : "Money coming in each month"}
+                          ? "Pemasukan Bulanan Biasa"
+                          : "Typical Monthly Revenue"}
                         <InfoBadge
                           text={
                             isId
-                              ? "Rata-rata uang yang masuk per bulan, bukan target ambisius."
-                              : "Average money coming in each month, not your ideal target."
+                              ? "Berapa uang masuk biasanya per bulan? Gunakan angka rata-rata yang sering terjadi, bukan target ideal."
+                              : "How much do you usually make in a month? Use realistic average numbers, not your 'dream' target."
                           }
                         />
                       </span>
@@ -497,13 +464,13 @@ export function LeftSidebar({
                     >
                       <span className="inline-flex items-center gap-1.5">
                         {isId
-                          ? "Klien terbesar (% pendapatan)"
-                          : "Biggest client % of income"}
+                          ? "Risiko Ketergantungan Klien"
+                          : "Client Concentration Risk"}
                         <InfoBadge
                           text={
                             isId
-                              ? "Kalau satu klien menyumbang terlalu besar, bisnis Anda jadi rapuh."
-                              : "If one client contributes too much, your business becomes fragile."
+                              ? "Jika klien terbesar Anda berhenti hari ini, berapa persen (%) pendapatan Anda yang hilang? Semakin besar angkanya, bisnis Anda semakin bahaya karena terlalu bergantung pada satu orang/perusahaan."
+                              : "If your biggest customer left you today, what % of your income would vanish? If this is high (e.g. over 40%), your business is very vulnerable to that one client."
                           }
                         />
                       </span>
@@ -536,23 +503,34 @@ export function LeftSidebar({
                 <button
                   id="decision-delay-toggle"
                   onClick={() => setShowDelayDetails(!showDelayDetails)}
-                  className="flex items-center gap-2 w-full text-left group"
+                  className={`flex flex-col gap-3 w-full text-left p-5 rounded-2xl border transition-all duration-300 ${
+                    showDelayDetails 
+                      ? "bg-scarlet/5 border-scarlet/20 dark:bg-scarlet-bright/5 dark:border-scarlet-bright/20" 
+                      : "bg-bone-soft border-ink/8 hover:border-scarlet/40 hover:bg-scarlet/2 dark:bg-charcoal-soft dark:border-frost/10 dark:hover:border-scarlet-bright/40"
+                  }`}
                 >
-                  <Plus
-                    size={16}
-                    className={`text-scarlet dark:text-scarlet-bright transition-transform ${showDelayDetails ? "rotate-45" : ""}`}
-                  />
-                  <span className="font-sans text-[13px] text-ink/70 dark:text-frost/70 group-hover:text-ink dark:group-hover:text-frost transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`p-1.5 rounded-lg transition-colors ${showDelayDetails ? "bg-scarlet text-white" : "bg-ink/5 text-ink/60 dark:bg-frost/5 dark:text-frost/60"}`}>
+                        <Plus
+                          size={16}
+                          className={`transition-transform duration-300 ${showDelayDetails ? "rotate-45" : ""}`}
+                        />
+                      </div>
+                      <span className="font-sans text-[14px] font-medium text-ink dark:text-frost">
+                        {isId
+                          ? "Cek Efek Penundaan Proyek"
+                          : "Check Project Delay Impacts"}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <p className="font-sans text-[12px] leading-relaxed text-ink/56 dark:text-frost/64 translate-x-1">
                     {isId
-                      ? "Tambahkan detail proyek & risiko delay"
-                      : "Add project & delay risk details"}
-                  </span>
+                      ? "Buka ini jika Anda ingin tahu bahayanya jika pengiriman proyek atau pembayaran klien terlambat."
+                      : "Open this to see the financial danger if your project delivery or client payment gets delayed."}
+                  </p>
                 </button>
-                <p className="mt-2 pl-6 font-sans text-[12px] text-ink/56 dark:text-frost/64">
-                  {isId
-                    ? "Buka ini hanya jika Anda ingin tahu dampak keterlambatan proyek terhadap uang masuk."
-                    : "Open this only if you want to see how delivery delays affect your money."}
-                </p>
 
                 {showDelayDetails && (
                   <div className="mt-6 space-y-6 pl-6 border-l border-scarlet/20">

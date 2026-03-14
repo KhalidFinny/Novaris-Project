@@ -134,10 +134,10 @@ export function NarrativePanel({
             ? "Masukkan angka utama Anda. Kami akan membantu menerjemahkannya menjadi keputusan."
             : "Enter your core numbers. We will help with making decisions."}
         </h1>
-        <p className="mt-8 max-w-2xl font-sans text-[18px] leading-relaxed text-ink/60 dark:text-frost/60">
+        <p className="mt-8 max-w-2xl font-sans text-[18px] leading-relaxed text-ink/68 dark:text-frost/68">
           {isId
-            ? "Isi kas, tagihan bulanan, pendapatan bulanan, dan ketergantungan pada klien terbesar. Tambahkan detail proyek hanya jika Anda ingin membaca risiko delay juga."
-            : "Fill in cash, monthly bills, monthly revenue, and biggest-client dependency. Add project details only if you want to read delay risk too."}
+            ? "Kami memantau uang di bank, tagihan rutin, pemasukan bulanan, dan ketergantungan klien Anda. Tambahkan detail proyek kalau Anda ingin melihat risiko jadwal molor juga."
+            : "We track your cash in bank, regular bills, monthly income, and client dependency. Add project details if you want to see risks from slipping schedules too."}
         </p>
       </div>
     );
@@ -146,19 +146,19 @@ export function NarrativePanel({
   const storyColor = RISK_COLORS[data.riskLevel];
   const urgencySummary = isId
     ? data.riskLevel === "critical"
-      ? "Ini perlu ditangani sekarang, bukan nanti."
+      ? "Kondisinya cukup darurat, ini harus jadi prioritas utama Anda hari ini."
       : data.riskLevel === "high"
-        ? "Ini belum krisis, tapi arahnya sudah salah."
+        ? "Belum masuk tahap krisis, tapi arahnya mulai mengkhawatirkan kalau dibiarkan."
         : data.riskLevel === "medium"
-          ? "Masalahnya masih bisa dibenahi tanpa langkah ekstrem."
-          : "Posisinya cukup sehat, tetapi tetap perlu dijaga."
+          ? "Masalahnya masih bisa dibenahi dengan tenang tanpa perlu langkah ekstrem."
+          : "Bisnis Anda masih sehat, tinggal dijaga saja supaya tetap stabil."
     : data.riskLevel === "critical"
-      ? "This needs attention now, not later."
+      ? "This is urgent. It needs to be your top priority today."
       : data.riskLevel === "high"
-        ? "This is not a crisis yet, but it is moving the wrong way."
+        ? "Not a crisis yet, but it's heading in a worrying direction if left alone."
         : data.riskLevel === "medium"
-          ? "The issue is still fixable without extreme moves."
-          : "The position is fairly healthy, but it still needs guarding.";
+          ? "The issue is still fixable calmly without needing extreme moves."
+          : "Your business is in good shape, just keep an eye on things to stay steady.";
 
   return (
     <div ref={contentRef} id="decision-story" className="w-full relative overflow-visible">
@@ -178,8 +178,8 @@ export function NarrativePanel({
           <span className="h-px w-12 bg-ink/8 dark:bg-frost/8" />
           <span className="font-sans text-[12px] text-ink/56 dark:text-frost/64">
             {isId
-              ? `Risiko ${data.riskLevel} · Probabilitas ${data.probability}%`
-              : `${data.riskLevel} risk · ${data.probability}% probability`}
+              ? `Risiko ${data.riskLevel} · Kemungkinan ${data.probability}%`
+              : `${data.riskLevel} risk · ${data.probability}% chance`}
           </span>
         </div>
 
@@ -189,8 +189,8 @@ export function NarrativePanel({
 
         <p className="mt-6 max-w-3xl font-sans text-[18px] leading-relaxed text-ink/68 dark:text-frost/72 stagger-item">
           {isId
-            ? "Ringkasnya: ini adalah pembacaan utama tentang apa yang paling menekan bisnis Anda sekarang dan langkah pertama yang paling masuk akal."
-            : "In plain terms: this is the main read on what is putting the most pressure on your business right now and the first move that makes the most sense."}
+            ? "Intinya: ini adalah kesimpulan utama tentang apa yang paling menekan bisnis Anda sekarang dan langkah awal yang paling masuk akal."
+            : "In short: this is the main takeaway on what's putting the most pressure on your business right now and the best first move to make."}
         </p>
 
         <div className="mt-12 grid grid-cols-[28px_1fr] gap-5 max-w-full xl:max-w-5xl stagger-item">
@@ -201,7 +201,7 @@ export function NarrativePanel({
             <p className="font-sans text-[12px] tracking-[0.16em] uppercase text-ink/58 dark:text-frost/66 mb-3">
               {isId ? "Yang paling menonjol" : "What stands out"}
             </p>
-            <blockquote className="font-fraunces text-[clamp(24px,3vw,38px)] italic font-light leading-[1.35] tracking-[-0.02em] text-ink dark:text-frost">
+            <blockquote className="font-fraunces text-[clamp(24px,3vw,38px)] italic font-light leading-[1.35] tracking-[-0.01em] text-ink dark:text-frost">
               {data.unseenRisk}
             </blockquote>
           </div>
