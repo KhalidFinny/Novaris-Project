@@ -122,8 +122,8 @@ export function CtaSection() {
         />
         <span className="font-mono text-[12px] tracking-[0.08em] text-ink/44 dark:text-frost/56">
           {isId
-            ? "© 2025 Novaris Inc. — Hak cipta dilindungi."
-            : "© 2025 Novaris Inc. — All rights reserved."}
+            ? "© 2026 Novaris Inc. — Hak cipta dilindungi."
+            : "© 2026 Novaris Inc. — All rights reserved."}
         </span>
         <div className="flex gap-5">
           {(isId

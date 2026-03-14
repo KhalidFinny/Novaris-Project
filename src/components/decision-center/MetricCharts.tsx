@@ -62,6 +62,18 @@ function ChartTitle({ title, help }: { title: string; help: string }) {
   );
 }
 
+function InfoChip({ label, help }: { label: string; help: string }) {
+  return (
+    <span className="group relative inline-flex items-center gap-1.5">
+      <span>{label}</span>
+      <Info size={12} className="text-ink/30 dark:text-frost/36" />
+      <span className="pointer-events-none absolute left-0 top-full z-30 mt-2 w-72 rounded-xl border border-ink/6 bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
+        {help}
+      </span>
+    </span>
+  );
+}
+
 
 export function MetricCharts({ 
   data, 
@@ -250,7 +262,12 @@ export function MetricCharts({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-xl border border-scarlet/12 bg-scarlet/4 p-7 flex flex-col justify-between min-h-[280px]">
-                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus terburuk" : "Worst case"}</p>
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
+                  <InfoChip 
+                    label={isId ? "Kasus terburuk" : "Worst case"} 
+                    help={isId ? "Kemungkinan 18% di mana pendapatan turun drastis atau biaya melonjak tinggi." : "18% probability where revenue drops sharply or costs spike unexpectedly."} 
+                  />
+                </p>
                 <div>
                   <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-scarlet dark:text-scarlet-bright">{data.monteCarlo.worst.probability}%</p>
                   <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.worst.outcome)}</p>
@@ -258,7 +275,12 @@ export function MetricCharts({
               </div>
 
               <div className="rounded-xl border border-steel/12 bg-steel/4 p-7 flex flex-col justify-between min-h-[280px]">
-                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus dasar" : "Base case"}</p>
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
+                  <InfoChip 
+                    label={isId ? "Kasus dasar" : "Base case"} 
+                    help={isId ? "Hasil yang paling mungkin (52%) berdasarkan performa rata-rata dan biaya saat ini." : "The most likely outcome (52%) based on average performance and current bills."} 
+                  />
+                </p>
                 <div>
                   <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-steel dark:text-steel-bright">{data.monteCarlo.base.probability}%</p>
                   <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.base.outcome)}</p>
@@ -266,7 +288,12 @@ export function MetricCharts({
               </div>
 
               <div className="rounded-xl border border-emerald-500/12 bg-emerald-500/4 p-7 flex flex-col justify-between min-h-[280px]">
-                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus terbaik" : "Best case"}</p>
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
+                  <InfoChip 
+                    label={isId ? "Kasus terbaik" : "Best case"} 
+                    help={isId ? "Peluang 20% di mana pendapatan melampaui target dan efisiensi biaya tercapai." : "20% probability where revenue exceeds targets and cost efficiencies are met."} 
+                  />
+                </p>
                 <div>
                   <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-emerald-600 dark:text-emerald-400">{data.monteCarlo.best.probability}%</p>
                   <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.best.outcome)}</p>

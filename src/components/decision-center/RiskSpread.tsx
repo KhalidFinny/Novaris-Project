@@ -1,6 +1,19 @@
 import React from "react";
 import type { DominoChain, RiskBridgePair } from "../../types/decisionCenter";
 import { useLocale } from "../../hooks/useLocale";
+import { Info } from "lucide-react";
+
+function InfoChip({ label, help }: { label: string; help: string }) {
+  return (
+    <span className="group relative inline-flex items-center gap-1.5">
+      <span>{label}</span>
+      <Info size={12} className="text-ink/30 dark:text-frost/36" />
+      <span className="pointer-events-none absolute left-0 top-full z-30 mt-2 w-72 rounded-xl border border-ink/6 bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
+        {help}
+      </span>
+    </span>
+  );
+}
 
 interface RiskSpreadProps {
   pairs: RiskBridgePair[];
@@ -63,7 +76,10 @@ export function RiskSpread({ pairs, chain, isCalculating }: RiskSpreadProps) {
       <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.1fr_0.95fr] gap-6 items-start">
         <div className="rounded-xl border border-ink/5 dark:border-frost/8 bg-bone/60 dark:bg-charcoal/50 px-6 py-6">
           <p className="font-sans text-[12px] tracking-[0.18em] uppercase text-scarlet dark:text-scarlet-bright">
-            {isId ? "Pemicu utama" : "Main trigger"}
+            <InfoChip 
+              label={isId ? "Pemicu utama" : "Main trigger"} 
+              help={isId ? "Kondisi finansial atau operasional yang mengaktifkan rantai risiko ini." : "The financial or operational condition that activated this risk chain."} 
+            />
           </p>
           {leadPair ? (
             <>
@@ -88,7 +104,10 @@ export function RiskSpread({ pairs, chain, isCalculating }: RiskSpreadProps) {
 
         <div className="rounded-xl border border-ink/5 dark:border-frost/8 bg-bone/60 dark:bg-charcoal/50 px-6 py-6">
           <p className="font-sans text-[12px] tracking-[0.18em] uppercase text-ink/58 dark:text-frost/66">
-            {isId ? "Jalur penyebaran" : "Spread path"}
+            <InfoChip 
+              label={isId ? "Jalur penyebaran" : "Spread path"} 
+              help={isId ? "Bagaimana satu masalah (seperti kas tipis atau delay) mulai merembet ke area lain." : "How a single issue (like thin cash or delay) starts affecting other areas."} 
+            />
           </p>
           <div className="mt-5 space-y-4">
             {middleNodes.length > 0 ? (
@@ -119,7 +138,10 @@ export function RiskSpread({ pairs, chain, isCalculating }: RiskSpreadProps) {
 
         <div className="rounded-xl border border-ink/5 dark:border-frost/8 bg-bone/60 dark:bg-charcoal/50 px-6 py-6">
           <p className="font-sans text-[12px] tracking-[0.18em] uppercase text-steel dark:text-steel-bright">
-            {isId ? "Dampak bisnis" : "Business impact"}
+            <InfoChip 
+              label={isId ? "Dampak bisnis" : "Business impact"} 
+              help={isId ? "Hasil akhir atau risiko strategis jika rantai dominonya tidak segera diputus." : "The final outcome or strategic risk if the domino chain is not interrupted."} 
+            />
           </p>
           {impactNode ? (
             <>

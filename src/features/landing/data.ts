@@ -28,19 +28,19 @@ export interface Benefit {
 }
 
 export const DAY_ONE_FEATURES: DayOneFeature[] = [
-    { label: 'Presentation-ready PDF report', included: true },
-    { label: 'Excel sheet with all calculations', included: true },
-    { label: 'Immediate download on checkout', included: true },
-    { label: 'Actionable decision narratives', included: true },
-    { label: 'One-time $1.50 payment', included: true },
+    { label: 'Intelligence-driven decision logic', included: true },
+    { label: 'Interactive risk simulation engine', included: true },
+    { label: 'Cascading domino effect analysis', included: true },
+    { label: 'Professional business narratives', included: true },
+    { label: 'Free access during Professional Beta', included: true },
 ];
 
 export const DAY_ONE_FEATURES_ID: DayOneFeature[] = [
-    { label: 'Laporan PDF siap presentasi', included: true },
-    { label: 'Sheet Excel dengan semua kalkulasi', included: true },
-    { label: 'Unduhan instan setelah pembayaran', included: true },
-    { label: 'Narasi keputusan untuk action', included: true },
-    { label: 'Satu kali bayar $1.50', included: true },
+    { label: 'Logika keputusan berbasis intelegensi', included: true },
+    { label: 'Engine simulasi risiko interaktif', included: true },
+    { label: 'Analisis efek domino kaskade', included: true },
+    { label: 'Narasi bisnis profesional', included: true },
+    { label: 'Akses gratis selama Beta Profesional', included: true },
 ];
 
 // Stats for the Problem section stat rows
@@ -53,7 +53,7 @@ export const STATS: Stat[] = [
     {
         stat: '62%',
         label: 'of SMBs are currently owed late payments.',
-        src: 'Intuit QuickBooks, 2025',
+        src: 'Intuit QuickBooks, 2026',
     },
     {
         stat: '90%',
@@ -68,7 +68,7 @@ export const STATS: Stat[] = [
     {
         stat: '32',
         label: 'days is the average payment delay.',
-        src: 'Coface UK Payment Survey, 2025',
+        src: 'Coface UK Payment Survey, 2026',
     },
     {
         stat: '80%',
@@ -86,7 +86,7 @@ export const STATS_ID: Stat[] = [
     {
         stat: '62%',
         label: 'SMB saat ini memiliki pembayaran terlambat yang belum diterima.',
-        src: 'Intuit QuickBooks, 2025',
+        src: 'Intuit QuickBooks, 2026',
     },
     {
         stat: '90%',
@@ -101,7 +101,7 @@ export const STATS_ID: Stat[] = [
     {
         stat: '32',
         label: 'hari adalah rata-rata keterlambatan pembayaran.',
-        src: 'Coface UK Payment Survey, 2025',
+        src: 'Coface UK Payment Survey, 2026',
     },
     {
         stat: '80%',

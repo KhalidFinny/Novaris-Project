@@ -15,7 +15,11 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { CURRENCY_SYMBOLS } from "../../config/constants";
-import { formatWithDots, parseDotNumber, withCap } from "../../utils/formatters";
+import {
+  formatWithDots,
+  parseDotNumber,
+  withCap,
+} from "../../utils/formatters";
 
 interface LeftSidebarProps {
   isOpen: boolean;
@@ -68,7 +72,6 @@ export function LeftSidebar({
     inputs.essentials.monthlyRevenueTarget !== "",
   );
 
-
   const InfoBadge = ({ text }: { text: string }) => (
     <span className="group relative inline-flex items-center">
       <Info size={12} className="text-ink/40 dark:text-frost/48" />
@@ -116,7 +119,7 @@ export function LeftSidebar({
       {/* Toggle Button - Mobile (bottom right FAB) */}
       <button
         onClick={onToggle}
-        className={`fixed bottom-5 right-5 z-50 flex lg:hidden items-center gap-2 rounded-full bg-scarlet px-5 py-3 text-white dark:bg-scarlet-bright dark:text-void shadow-lg transition-all duration-300 ${
+        className={`fixed bottom-5 right-5 z-50 flex lg:hidden items-center gap-2 rounded-full bg-scarlet px-5 py-3 text-white dark:bg-scarlet-bright dark:text-void transition-all duration-300 ${
           isOpen ? "opacity-0 pointer-events-none translate-y-4" : "opacity-100"
         }`}
         aria-label={isId ? "Buka panel input" : "Open input panel"}
@@ -215,27 +218,37 @@ export function LeftSidebar({
                     onChange={(e) => {
                       const newCurrency = e.target.value as typeof currency;
                       const oldCurrency = currency;
-                      
+
                       const convert = (val: string | number) => {
                         if (val === "") return "";
-                        return convertAmount(Number(val), oldCurrency, newCurrency);
+                        return convertAmount(
+                          Number(val),
+                          oldCurrency,
+                          newCurrency,
+                        );
                       };
 
                       if (inputs.essentials) {
                         onUpdateEssentials({
                           cashInBank: convert(inputs.essentials.cashInBank),
                           monthlyBills: convert(inputs.essentials.monthlyBills),
-                          monthlyRevenue: convert(inputs.essentials.monthlyRevenue),
-                          monthlyRevenueTarget: convert(inputs.essentials.monthlyRevenueTarget ?? ""),
+                          monthlyRevenue: convert(
+                            inputs.essentials.monthlyRevenue,
+                          ),
+                          monthlyRevenueTarget: convert(
+                            inputs.essentials.monthlyRevenueTarget ?? "",
+                          ),
                         });
                       }
-                      
+
                       if (inputs.delayRisk) {
                         onUpdateDelayRisk({
-                          paymentAtRisk: convert(inputs.delayRisk.paymentAtRisk),
+                          paymentAtRisk: convert(
+                            inputs.delayRisk.paymentAtRisk,
+                          ),
                         });
                       }
-                      
+
                       setCurrency(newCurrency);
                     }}
                     className="min-w-[120px] rounded-full border border-ink/8 bg-transparent px-3 py-2 font-sans text-[13px] text-ink dark:bg-charcoal-soft dark:text-frost outline-none dark:border-frost/10"
@@ -466,7 +479,9 @@ export function LeftSidebar({
                           )}
                           onChange={(e) =>
                             onUpdateEssentials({
-                              monthlyRevenueTarget: parseDotNumber(e.target.value),
+                              monthlyRevenueTarget: parseDotNumber(
+                                e.target.value,
+                              ),
                             })
                           }
                           className="w-full h-12 pl-6 pr-3 bg-transparent border-b border-ink/8 dark:border-frost/8 font-sans text-[18px] text-ink dark:text-frost outline-none transition-colors placeholder:text-ink/20 focus:border-scarlet/50"
@@ -571,7 +586,9 @@ export function LeftSidebar({
                         id="dc-project-target-days"
                         type="text"
                         inputMode="numeric"
-                        value={formatWithDots(inputs.delayRisk.projectTargetDays)}
+                        value={formatWithDots(
+                          inputs.delayRisk.projectTargetDays,
+                        )}
                         onChange={(e) =>
                           onUpdateDelayRisk({
                             projectTargetDays: parseDotNumber(e.target.value),

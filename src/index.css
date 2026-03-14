@@ -184,18 +184,15 @@
         color: #fff;
     }
 
+    /* Hide scrollbar for Safari, Chrome and Opera */
     ::-webkit-scrollbar {
-        width: 3px;
+        display: none;
     }
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: rgba(8, 14, 28, 0.18);
-        border-radius: 9999px;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-        background: rgba(230, 234, 248, 0.15);
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
     }
 
     :focus-visible {

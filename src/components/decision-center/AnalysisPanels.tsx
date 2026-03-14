@@ -20,6 +20,18 @@ interface AnalysisPanelsProps {
   isCalculating: boolean;
 }
 
+function InfoChip({ label, help }: { label: string; help: string }) {
+  return (
+    <span className="group relative inline-flex items-center gap-1.5 cursor-help">
+      <span>{label}</span>
+      <Info size={12} className="text-ink/30 dark:text-frost/36" />
+      <span className="pointer-events-none absolute left-0 top-full z-30 mt-2 w-72 rounded-xl border border-ink/6 bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
+        {help}
+      </span>
+    </span>
+  );
+}
+
 export function AnalysisPanels({ 
   data, 
   scenarioInputs = { cashInjection: 0, projectAccelerationWeeks: 0, overheadReduction: 0, earlyARCollectionRate: 0, newRevenue30d: 0 }, 
@@ -78,7 +90,20 @@ export function AnalysisPanels({
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-sans text-[14px] text-ink dark:text-frost">
-                        {score.category}
+                        <InfoChip 
+                          label={score.category} 
+                          help={
+                            score.category.toLowerCase().includes("overall") 
+                              ? (isId ? "Gabungan semua risiko utama bisnis Anda." : "A weighted blend of all your primary business risks.")
+                              : score.category.toLowerCase().includes("cash")
+                                ? (isId ? "Seberapa tahan posisi uang Anda terhadap guncangan mendadak." : "How resilient your cash position is against sudden shocks.")
+                                : score.category.toLowerCase().includes("revenue") || score.category.toLowerCase().includes("market")
+                                  ? (isId ? "Stabilitas pemasukan Anda terhadap target atau operasional." : "The stability of your income against targets or operations.")
+                                  : score.category.toLowerCase().includes("client")
+                                    ? (isId ? "Tingkat risiko dari ketergantungan pada klien tertentu." : "Risk level stemming from dependency on specific clients.")
+                                    : (isId ? "Risiko dari jadwal yang bergeser dan pembayaran tertahan." : "Risk from shifting schedules and withheld payments.")
+                          }
+                        />
                       </span>
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${getScoreBg(score.score)} ${getScoreColor(score.score)}`}>

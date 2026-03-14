@@ -1,7 +1,19 @@
 import React from "react";
 import type { DominoChain } from "../../types/decisionCenter";
 import { useLocale } from "../../hooks/useLocale";
-import { AlertTriangle, AlertCircle, TrendingDown, CheckCircle } from "lucide-react";
+import { AlertTriangle, AlertCircle, TrendingDown, CheckCircle, Info } from "lucide-react";
+
+function InfoChip({ label, help }: { label: string; help: string }) {
+  return (
+    <span className="group relative inline-flex items-center gap-1.5 cursor-help">
+      <span>{label}</span>
+      <Info size={12} className="text-ink/30 dark:text-frost/36" />
+      <span className="pointer-events-none absolute left-0 top-full z-30 mt-2 w-72 rounded-xl border border-ink/6 bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
+        {help}
+      </span>
+    </span>
+  );
+}
 
 interface DominoChainProps {
   chain: DominoChain | null;
@@ -90,7 +102,10 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
         <div className="flex items-center justify-between flex-wrap gap-6">
           <div>
             <h2 className="font-fraunces text-2xl font-light text-ink dark:text-frost mb-3">
-              {isId ? "Rantai Domino" : "Domino Chain"}
+              <InfoChip 
+                label={isId ? "Rantai Domino" : "Domino Chain"} 
+                help={isId ? "Visualisasi bagaimana satu masalah memicu rentetan kejadian di area lain bisnis Anda." : "A visualization of how one problem triggers a chain reaction across other areas of your business."} 
+              />
             </h2>
             <p className="font-sans text-[14px] text-ink/60 dark:text-frost/60 max-w-xl leading-relaxed">
               {isId 

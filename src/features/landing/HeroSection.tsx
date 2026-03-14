@@ -140,14 +140,14 @@ export function HeroSection() {
               label: isId
                 ? "SMB memiliki pembayaran terlambat"
                 : "of SMBs currently owed late payments",
-              src: "Intuit QuickBooks, 2025",
+              src: "Intuit QuickBooks, 2026",
             },
             {
               stat: "32",
               label: isId
-                ? "hari rata-rata keterlambatan pembayaran"
-                : "days average payment delay",
-              src: "Coface UK, 2025",
+                ? "hari adalah rata-rata keterlambatan pembayaran."
+                : "days is the average payment delay.",
+              src: "Coface UK, 2026",
             },
           ].map((item, i) => (
             <div
