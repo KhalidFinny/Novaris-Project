@@ -8,26 +8,26 @@ import { BenefitsSection } from "./BenefitsSection";
 import { PricingSection } from "./PricingSection";
 import { CtaSection } from "./CtaSection";
 import { useLocale } from "../../hooks/useLocale";
+import { AnimatedOnScroll } from "../../components/decision-center/AnimatedSection";
 
 export function HeroSection() {
   const { language } = useLocale();
   const isId = language === "id";
 
   return (
-    <div className="relative bg-bone">
+    <div className="relative bg-bone dark:bg-charcoal transition-colors duration-520">
       <Nav />
-      {/* ── HERO ── */}
       <section
         className="flex flex-col items-center justify-start text-center
-                   px-[5%] pt-12 pb-24 bg-transparent dark:bg-transparent relative overflow-hidden
+                   px-[5%] pt-12 pb-24 bg-bone dark:bg-charcoal relative overflow-hidden
                    transition-colors duration-520 ease-spring"
       >
         {/* Ambient orbs */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none dark:opacity-85"
           style={{
             background:
-              "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(204,31,46,0.08) 0%, transparent 70%), radial-gradient(ellipse 40% 35% at 80% 80%, rgba(45,95,138,0.07) 0%, transparent 60%)",
+              "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(164,22,36,0.08) 0%, transparent 70%), radial-gradient(ellipse 40% 35% at 80% 80%, rgba(45,95,138,0.07) 0%, transparent 60%), radial-gradient(ellipse 36% 28% at 18% 22%, rgba(210,179,116,0.14) 0%, transparent 68%)",
           }}
           aria-hidden="true"
         />
@@ -51,7 +51,7 @@ export function HeroSection() {
             </span>
             <span
               className="block font-fraunces font-bold
-                         text-scarlet dark:text-scarlet-bright transition-colors duration-520 ease-spring"
+                         text-scarlet dark:text-steel-bright transition-colors duration-520 ease-spring"
               style={{
                 fontSize: "clamp(52px, 8vw, 114px)",
                 lineHeight: 1.05,
@@ -74,11 +74,10 @@ export function HeroSection() {
           </span>
         </h1>
 
-        {/* Subtext */}
-        <p
-          className="max-w-[50ch] mx-auto mb-10
-                     font-sans font-normal text-2xl leading-[1.6]
-                     text-ink/60 dark:text-frost/60 text-center
+         <p
+           className="max-w-[50ch] mx-auto mb-10
+                      font-sans font-normal text-[clamp(21px,2.4vw,28px)] leading-[1.68]
+                     text-ink/68 dark:text-frost/76 text-center
                      transition-colors duration-520 ease-spring"
           style={{
             animation: "fadeUp .6s var(--ease-spring) 300ms both",
@@ -89,7 +88,6 @@ export function HeroSection() {
             : "Novaris gives business owners a live, structured view of every risk that matters so decisions land with conviction, not guesswork."}
         </p>
 
-        {/* CTA buttons */}
         <div
           className="flex gap-3 items-center justify-center mb-18"
           style={{
@@ -98,27 +96,26 @@ export function HeroSection() {
         >
           <Link
             to="/decision-center"
-            className="font-sans font-semibold text-[11.5px] uppercase tracking-wider
-                       px-7 py-3 rounded-card text-center no-underline
-                       bg-scarlet dark:bg-scarlet-bright text-white
-                       hover:bg-scarlet-dark dark:hover:bg-scarlet-hover
+            className="font-sans font-semibold text-[13px] uppercase tracking-[0.14em]
+                       px-7 py-3.5 rounded-card text-center no-underline
+                       bg-scarlet dark:bg-steel-bright text-white dark:text-void
+                       hover:bg-scarlet-dark dark:hover:bg-[#a8cbd4]
                        hover:-translate-y-0.5
                        transition-all duration-200 ease-spring border-0 cursor-pointer"
           >
             {isId ? "Masuk Pusat Keputusan" : "Enter Decision Center"}
           </Link>
-          <a
-            href="#how-it-works"
-            className="font-sans font-semibold text-[11.5px] uppercase tracking-wider
-                       px-7 py-3 rounded-card border border-scarlet-dark text-black dark:text-frost/50 text-center
+          <Link
+            to="/how-it-works"
+            className="font-sans font-semibold text-[13px] uppercase tracking-[0.14em]
+                        px-7 py-3.5 rounded-card border border-scarlet-dark text-black dark:text-frost/86 text-center dark:border-steel-bright/28 dark:bg-charcoal-soft/72
                        hover:-translate-y-0.5 no-underline
                        transition-all duration-200 ease-spring cursor-pointer"
           >
             {isId ? "Lihat Cara Kerja" : "See How It Works"}
-          </a>
+          </Link>
         </div>
 
-        {/* Stat strip */}
         <div
           className="flex items-stretch w-full max-w-stat-strip mx-auto
                      border-t border-b border-ink/9 dark:border-frost/8
@@ -160,26 +157,44 @@ export function HeroSection() {
             >
               <div
                 className="font-sans font-semibold text-[32px] leading-none tracking-[-0.02em]
-                           text-scarlet dark:text-scarlet-bright transition-colors duration-520"
+                           text-scarlet dark:text-steel-bright transition-colors duration-520"
               >
                 {item.stat}
               </div>
-              <div className="font-sans text-[11.5px] text-ink/50 dark:text-frost/50 text-center max-w-32.5 leading-[1.3]">
-                {item.label}
-              </div>
-              <div className="font-mono text-[9px] tracking-[.06em] text-ink/30 dark:text-frost/28">
-                {item.src}
-              </div>
+                 <div className="font-sans text-[16px] text-ink/66 dark:text-frost/76 text-center max-w-44 leading-[1.45]">
+                 {item.label}
+               </div>
+                <div className="font-mono text-[12px] tracking-[.06em] text-ink/46 dark:text-frost/58">
+                 {item.src}
+               </div>
             </div>
           ))}
         </div>
       </section>
-      <ProblemSection />
-      <SolutionSection />
-      <QuoteSection />
-      <BenefitsSection />
-      <PricingSection />
-      <CtaSection />
+      
+      <AnimatedOnScroll>
+        <ProblemSection />
+      </AnimatedOnScroll>
+      
+      <AnimatedOnScroll>
+        <SolutionSection />
+      </AnimatedOnScroll>
+      
+      <AnimatedOnScroll>
+        <QuoteSection />
+      </AnimatedOnScroll>
+      
+      <AnimatedOnScroll>
+        <BenefitsSection />
+      </AnimatedOnScroll>
+      
+      <AnimatedOnScroll>
+        <PricingSection />
+      </AnimatedOnScroll>
+      
+      <AnimatedOnScroll>
+        <CtaSection />
+      </AnimatedOnScroll>
     </div>
   );
 }

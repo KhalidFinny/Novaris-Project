@@ -1,35 +1,47 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useTheme } from "./hooks/useTheme";
+
+import { LoadingOverlay } from "./components/ui/LoadingOverlay";
+import { PageTransitionProvider, usePageTransition } from "./components/layout/PageTransitionProvider";
 
 const LandingPage = React.lazy(() => import("./pages/LandingPage"));
 const DecisionCenter = React.lazy(() => import("./pages/DecisionCenter"));
+const HowItWorksPage = React.lazy(() => import("./pages/HowItWorksPage"));
 
-function ThemeWrapper({ children }: { children: React.ReactNode }) {
-  // Initialise theme from localStorage on mount — writes .dark class to <html>
-  useTheme();
-  return <>{children}</>;
+function GlobalTransitionOverlay() {
+  const { isLoading } = usePageTransition();
+  return <LoadingOverlay show={isLoading} message="LOADING NOVARIS..." />;
+}
+
+function AppContent() {
+  return (
+    <>
+      <GlobalTransitionOverlay />
+      <Suspense fallback={<LoadingOverlay show={true} />}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/decision-center" element={<DecisionCenter />} />
+          
+          {/* Legacy redirects */}
+          <Route path="/workspace" element={<Navigate to="/decision-center" replace />} />
+          <Route path="/workspace/financial" element={<Navigate to="/decision-center" replace />} />
+          <Route path="/workspace/delay" element={<Navigate to="/decision-center" replace />} />
+          <Route path="/financial" element={<Navigate to="/decision-center" replace />} />
+          <Route path="/delay" element={<Navigate to="/decision-center" replace />} />
+          <Route path="/integrated" element={<Navigate to="/decision-center" replace />} />
+        </Routes>
+      </Suspense>
+    </>
+  );
 }
 
 function App() {
   return (
     <BrowserRouter>
-      <ThemeWrapper>
-        <Suspense fallback={<main className="min-h-screen bg-bone dark:bg-charcoal" />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/decision-center" element={<DecisionCenter />} />
-            
-            {/* Legacy redirects */}
-            <Route path="/workspace" element={<Navigate to="/decision-center" replace />} />
-            <Route path="/workspace/financial" element={<Navigate to="/decision-center" replace />} />
-            <Route path="/workspace/delay" element={<Navigate to="/decision-center" replace />} />
-            <Route path="/financial" element={<Navigate to="/decision-center" replace />} />
-            <Route path="/delay" element={<Navigate to="/decision-center" replace />} />
-            <Route path="/integrated" element={<Navigate to="/decision-center" replace />} />
-          </Routes>
-        </Suspense>
-      </ThemeWrapper>
+      <PageTransitionProvider>
+        <AppContent />
+      </PageTransitionProvider>
     </BrowserRouter>
   );
 }

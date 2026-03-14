@@ -11,17 +11,15 @@ export function ProblemSection() {
   return (
     <section
       id="about"
-      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-transparent dark:bg-transparent transition-colors duration-520"
+      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-bone- dark:bg-charcoal transition-colors duration-520"
     >
       <div className="max-w-content mx-auto">
-        {/* Top 2-col grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start mb-16">
           {/* Left: headline + body */}
           <div>
-            {/* Eyebrow */}
             <div
-              className="flex items-center gap-2.5 mb-4.5
-                            font-mono text-[9px] tracking-widest uppercase
+               className="flex items-center gap-2.5 mb-4.5
+                             font-mono text-[12px] tracking-[0.16em] uppercase
                             text-scarlet dark:text-scarlet-bright"
             >
               <span
@@ -41,14 +39,13 @@ export function ProblemSection() {
                 {isId ? "berjalan tanpa visibilitas." : "flying blind."}
               </em>
             </h2>
-            <p className="font-sans font-light text-base text-ink/70 dark:text-frost/70 leading-relaxed max-w-[40ch]">
+             <p className="font-sans font-light text-[20px] text-ink/72 dark:text-frost/78 leading-relaxed max-w-[42ch]">
               {isId
                 ? "Setiap hari Anda membuat keputusan berisiko tinggi. Tanpa pandangan risiko yang terstruktur, bisnis hanya mengandalkan insting. Itu bukan strategi. Itu eksposur."
                 : "You're making high-stakes decisions every day. Without a structured view of risk, you're operating on instinct alone. That's not strategy. That's exposure."}
             </p>
           </div>
 
-          {/* Right: stat rows */}
           <div className="flex flex-col">
             {stats.map((s, i) => (
               <div
@@ -65,10 +62,10 @@ export function ProblemSection() {
                   {s.stat}
                 </div>
                 <div>
-                  <p className="font-sans font-medium text-[13.5px] text-ink dark:text-frost leading-snug mb-0.75">
+                  <p className="font-sans font-medium text-[18px] text-ink dark:text-frost leading-snug mb-1.5">
                     {s.label}
                   </p>
-                  <span className="font-mono text-[8.5px] tracking-wider text-ink/30 dark:text-frost/28">
+                  <span className="font-mono text-[12px] tracking-[0.08em] text-ink/48 dark:text-frost/60">
                     {s.src}
                   </span>
                 </div>
@@ -77,33 +74,32 @@ export function ProblemSection() {
           </div>
         </div>
 
-        {/* 3-col flat problem cards */}
         <div
           className="grid grid-cols-1 md:grid-cols-3 gap-px
-                     bg-ink/9 dark:bg-white
-                     border border-ink/9 dark:border-frost/8
+                     bg-ink/9 dark:bg-charcoal-light
+                     border border-ink/9 dark:border-frost/10
                      rounded-card overflow-hidden"
         >
           {problems.map((p, i) => (
             <div
               key={i}
-              className="bg-bone dark:bg-void p-8 cursor-default
-                         hover:bg-bone-soft dark:hover:bg-void-soft
-                         transition-colors duration-200 ease-spring"
+               className="bg-bone dark:bg-charcoal-soft p-8 cursor-default
+                          hover:bg-bone-soft dark:hover:bg-charcoal-light
+                          transition-colors duration-200 ease-spring"
             >
               <div
-                className="font-mono text-[9px] tracking-widest uppercase
+                className="font-sans text-[13px] tracking-[0.14em] uppercase
                               text-scarlet dark:text-scarlet-bright mb-4"
               >
                 {p.tag}
               </div>
               <h3
-                className="font-fraunces font-semibold text-lg leading-tight tracking-tight
+                 className="font-fraunces font-semibold text-[26px] leading-tight tracking-tight
                              text-ink dark:text-frost mb-2.5"
               >
                 {p.headline}
               </h3>
-              <p className="font-sans font-light text-xs text-ink/50 dark:text-frost/50 leading-relaxed">
+              <p className="font-sans font-light text-[17px] text-ink/66 dark:text-frost/76 leading-relaxed">
                 {p.body}
               </p>
             </div>

@@ -19,9 +19,9 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
         )}
         <input
           type="range"
-          style={{ accentColor: "#FF5A36" }}
+          style={{ accentColor: "var(--color-brand-accent)" }}
           className={cn(
-            "w-full h-1.5 rounded-pill appearance-none cursor-pointer bg-white/10 transition-all duration-300",
+            "w-full h-1.5 rounded-full appearance-none cursor-pointer bg-white/10 transition-all duration-300",
             isGlow ? "shadow-[0_0_10px_rgba(255,90,54,0.35)]" : "",
             className,
           )}

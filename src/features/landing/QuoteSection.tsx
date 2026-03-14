@@ -7,7 +7,7 @@ export function QuoteSection() {
 
   return (
     <section
-      className="px-13 py-22 bg-transparent dark:bg-transparent
+      className="px-13 py-22 bg-bone dark:bg-charcoal
                  transition-colors duration-520 ease-spring
                  max-sm:px-6"
     >
@@ -23,11 +23,11 @@ export function QuoteSection() {
             ></div>
             <div>
               <blockquote
-                className="font-fraunces font-light italic
-                           leading-[1.46] tracking-[-0.01em]
-                           text-ink dark:text-frost mb-6
-                           transition-colors duration-520"
-                style={{ fontSize: "clamp(24px, 3.2vw, 42px)" }}
+                 className="font-fraunces font-light italic
+                            leading-[1.46] tracking-[-0.01em]
+                            text-ink dark:text-frost mb-6
+                            transition-colors duration-520"
+                 style={{ fontSize: "clamp(28px, 3.4vw, 46px)" }}
               >
                 {" "}
                 "
@@ -43,8 +43,8 @@ export function QuoteSection() {
                 "
               </blockquote>
               <div
-                className="flex items-center gap-2.5
-                              font-sans text-[11px] text-ink/30 dark:text-frost/28 tracking-[.06em]
+                  className="flex items-center gap-2.5
+                               font-sans text-[15px] text-ink/54 dark:text-frost/64 tracking-[.06em]
                               transition-colors duration-520"
               >
                 <span

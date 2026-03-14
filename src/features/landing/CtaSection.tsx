@@ -12,13 +12,13 @@ export function CtaSection() {
   return (
     <>
       {/* ── CONTACT / CTA ── */}
-      <section className="px-13 py-25 relative overflow-hidden max-sm:px-6 bg-scarlet">
+      <section className="px-13 py-25 relative overflow-hidden max-sm:px-6 bg-scarlet dark:bg-charcoal-light transition-colors duration-520">
         {/* Metallic shimmer top line */}
         <div
           className="absolute top-0 left-0 right-0 h-px"
           style={{
-            background:
-              "linear-gradient(to right, transparent 5%, rgba(210,225,240,.3) 25%, rgba(255,255,255,.55) 50%, rgba(210,225,240,.3) 75%, transparent 95%)",
+             background:
+               "linear-gradient(to right, transparent 5%, rgba(243,239,230,.12) 25%, rgba(243,239,230,.22) 50%, rgba(243,239,230,.12) 75%, transparent 95%)",
           }}
           aria-hidden="true"
         />
@@ -30,7 +30,7 @@ export function CtaSection() {
                      tracking-tighter whitespace-nowrap"
           style={{
             fontSize: "clamp(90px, 13vw, 200px)",
-            color: "rgba(255,255,255,0.04)",
+             color: "rgba(243,239,230,0.05)",
           }}
           aria-hidden="true"
         >
@@ -41,13 +41,10 @@ export function CtaSection() {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-16 items-center">
             {/* Left */}
             <div>
-              <div
-                className="font-mono text-[9px] tracking-widest uppercase mb-4.5"
-                style={{ color: "rgba(255,255,255,0.35)" }}
-              >
+              <div className="font-sans text-[13px] tracking-[0.14em] uppercase mb-4.5 text-white/62 dark:text-frost/60">
                 {isId
-                  ? "Tanpa kartu kredit · Setup kurang dari 10 menit"
-                  : "No credit card needed · Setup in under 10 minutes"}
+                  ? "Capaian Strategis Anda"
+                  : "Your Strategic Edge"}
               </div>
               <h2
                 className="font-fraunces font-semibold
@@ -56,90 +53,48 @@ export function CtaSection() {
                 style={{ fontSize: "clamp(40px, 5vw, 76px)" }}
               >
                 {isId
-                  ? "Berhenti berjalan tanpa visibilitas."
-                  : "Stop flying blind."}
+                  ? "Analisis siap eksekusi."
+                  : "Insights ready to execute."}
               </h2>
-              <p className="font-sans font-light text-xl text-white/70 leading-relaxed max-w-[35ch] mx-auto mb-10">
+              <p className="font-sans font-light text-[21px] text-white/84 dark:text-frost/84 leading-relaxed max-w-[38ch] mb-10">
                 {isId
-                  ? "Bergabung dengan ribuan owner bisnis yang beralih dari reaktif menjadi siap. Mulai gratis, upgrade saat sudah tepat."
-                  : "Join thousands of business owners who've moved from reactive to ready. Start free, upgrade when it makes sense."}
+                  ? "Buka kekuatan penuh intelegensi risiko finansial dan operasional. Eksplorasi dashboard interaktif kami sekarang secara gratis."
+                  : "Unlock the full power of financial and operational risk intelligence. Explore our interactive dashboard now for free during beta."}
               </p>
-              <div className="flex gap-2.5 items-center">
+              <div className="flex gap-3 items-center flex-wrap">
                 {/* White primary */}
                 <Link
-                  to="/financial"
-                  className="inline-flex font-sans font-bold text-[11px] uppercase tracking-wider
-                             px-6.5 py-3 rounded-card bg-white no-underline
+                  to="/decision-center"
+                  className="inline-flex font-sans font-bold text-[13px] uppercase tracking-[0.14em]
+                             px-6.5 py-3.5 rounded-card bg-frost text-charcoal no-underline
                              hover:opacity-90 hover:-translate-y-0.5
                              transition-all duration-200 ease-spring border-0 cursor-pointer"
-                  style={{ color: "var(--color-scarlet)" }}
                 >
-                  {isId ? "Mulai Uji Coba Gratis" : "Start Free Trial"}
+                  {isId ? "Eksplorasi Engine" : "Explore the Engine"}
                 </Link>
-                {/* Outline */}
-                <a
-                  href="mailto:hello@novaris.app"
-                  className="inline-flex font-sans text-[12px] rounded-card
-                             px-5 py-2.75 cursor-pointer no-underline
-                             transition-all duration-200"
-                  style={{
-                    color: "rgba(255,255,255,0.42)",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
-                      "rgba(255,255,255,0.5)";
-                    (e.currentTarget as HTMLAnchorElement).style.color =
-                      "rgba(255,255,255,0.7)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
-                      "rgba(255,255,255,0.2)";
-                    (e.currentTarget as HTMLAnchorElement).style.color =
-                      "rgba(255,255,255,0.42)";
-                  }}
-                >
-                  {isId ? "Jadwalkan Demo" : "Book a Demo"}
-                </a>
               </div>
             </div>
 
             {/* Right: feature checklist aside */}
-            <div
-              className="min-w-50 rounded-card p-6"
-              style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                backdropFilter: "blur(4px)",
-              }}
-            >
-              <div
-                className="font-mono text-[8.5px] tracking-widest uppercase mb-4"
-                style={{ color: "rgba(255,255,255,0.32)" }}
-              >
+            <div className="min-w-50 rounded-card p-6 border border-white/12 bg-white/8 dark:border-frost/10 dark:bg-charcoal-soft/78 backdrop-blur-xs">
+              <div className="font-sans text-[13px] tracking-[0.14em] uppercase mb-4 text-white/60 dark:text-frost/60">
                 {isId
-                  ? "Yang Anda dapat di hari pertama"
-                  : "What you get on day one"}
+                  ? "Fitur Inti Intelegensi"
+                  : "Core Intelligence Features"}
               </div>
               {dayOneFeatures.map((f, i) => (
                 <div
                   key={i}
-                  className={`flex items-center gap-2.5 font-sans text-[12.5px]
-                              py-1.75 ${i < dayOneFeatures.length - 1 ? "border-b" : ""}`}
-                  style={{
-                    color: f.included
-                      ? "rgba(255,255,255,0.52)"
-                      : "rgba(255,255,255,0.26)",
-                    borderBottomColor: "rgba(255,255,255,0.07)",
-                  }}
+                  className={`flex items-center gap-2.5 font-sans text-[16px]
+                              py-1.75 ${i < dayOneFeatures.length - 1 ? "border-b" : ""} ${
+                                f.included
+                                  ? "border-white/10 text-white/84 dark:border-frost/10 dark:text-frost/84"
+                                  : "border-white/10 text-white/44 dark:border-frost/10 dark:text-frost/44"
+                              }`}
                 >
                   <div
                     className="w-1.25 h-1.25 rounded-full shrink-0"
-                    style={{
-                      background: f.included
-                        ? "#6fcf97"
-                        : "rgba(255,255,255,0.25)",
-                    }}
+                    style={{ background: f.included ? "var(--color-steel-bright)" : "rgba(243,239,230,0.22)" }}
                   />
                   {f.label}
                 </div>
@@ -150,20 +105,22 @@ export function CtaSection() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer
-        className="px-13 py-7
-                   border-t border-ink/9 dark:border-frost/8
-                   bg-bone dark:bg-void
-                   flex items-center justify-between flex-wrap gap-3
-                   transition-colors duration-520 ease-spring
-                   max-sm:px-6"
+       <footer
+         className="px-13 py-7
+                    border-t border-ink/9 dark:border-frost/10
+                    bg-bone dark:bg-charcoal
+                    flex items-center justify-between flex-wrap gap-3
+                    transition-colors duration-520 ease-spring
+                    max-sm:px-6"
       >
         <img
           src={logoUrl}
           alt="Novaris"
+          width="112"
+          height="24"
           className="h-6 w-auto object-contain opacity-70"
         />
-        <span className="font-mono text-[9.5px] tracking-wider text-ink/30 dark:text-frost/28">
+        <span className="font-mono text-[12px] tracking-[0.08em] text-ink/44 dark:text-frost/56">
           {isId
             ? "© 2025 Novaris Inc. — Hak cipta dilindungi."
             : "© 2025 Novaris Inc. — All rights reserved."}
@@ -176,8 +133,8 @@ export function CtaSection() {
             <a
               key={label}
               href="#"
-              className="font-sans text-xs text-ink/30 dark:text-frost/28
-                         hover:text-ink dark:hover:text-frost no-underline transition-colors duration-200"
+               className="font-sans text-[15px] text-ink/48 dark:text-frost/58
+                          hover:text-ink dark:hover:text-frost no-underline transition-colors duration-200"
             >
               {label}
             </a>

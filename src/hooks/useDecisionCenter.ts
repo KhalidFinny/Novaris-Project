@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type {
   AllInputs,
   DecisionCenterData,
@@ -6,7 +6,8 @@ import type {
   DelayRiskInputs,
   ScenarioSnapshot,
 } from "../types/decisionCenter";
-import { calculateDecisionCenter } from "../lib/engine/decisionCenterEngine";
+import { useDecisionPersistence } from "./useDecisionPersistence";
+import { useDecisionEngine } from "./useDecisionEngine";
 
 const createEmptyInputs = (): AllInputs => ({
   essentials: {
@@ -63,18 +64,39 @@ const createEmptyData = (): DecisionCenterData => ({
   lastUpdated: null,
 });
 
-const SUBMITTED_INPUTS_STORAGE_KEY = "novaris_decision_center_submitted_v1";
-const SNAPSHOTS_STORAGE_KEY = "novaris_decision_center_snapshots_v1";
-
 export function useDecisionCenter(language: "en" | "id") {
   const isId = language === "id";
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [inputs, setInputs] = useState<AllInputs>(createEmptyInputs());
-  const [submittedInputs, setSubmittedInputs] = useState<AllInputs | null>(null);
-  const [scenarioSnapshots, setScenarioSnapshots] = useState<ScenarioSnapshot[]>([]);
-  const [apiUnavailable, setApiUnavailable] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPaid, setIsPaidState] = useState(() => {
+    return localStorage.getItem("novaris_reports_paid") === "true";
+  });
+
+  const setIsPaid = useCallback((val: boolean) => {
+    setIsPaidState(val);
+    localStorage.setItem("novaris_reports_paid", String(val));
+  }, []);
+  
+  // Use Persistence Hook
+  const {
+    inputs,
+    setInputs,
+    submittedInputs,
+    setSubmittedInputs,
+    persistSubmittedInputs,
+    scenarioSnapshots,
+    setScenarioSnapshots,
+    clearPersistence,
+  } = useDecisionPersistence(createEmptyInputs());
+
+  // Use Engine Hook
+  const { 
+    data, 
+    setData, 
+    setApiUnavailable, 
+    errorMessage, 
+    setErrorMessage 
+  } = useDecisionEngine(submittedInputs, inputs.scenario, language, createEmptyData());
 
   const missingEssentials = [
     inputs.essentials.cashInBank === "" ? "cashInBank" : null,
@@ -92,133 +114,19 @@ export function useDecisionCenter(language: "en" | "id") {
     inputs.delayRisk.bufferDays === "" ? "bufferDays" : null,
   ].filter(Boolean) as string[];
 
-  const [data, setData] = useState<DecisionCenterData>(createEmptyData());
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const stored = window.localStorage.getItem(SUBMITTED_INPUTS_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as AllInputs;
-        setInputs(parsed);
-        setSubmittedInputs(parsed);
-      } catch (error) {
-        console.error("Failed to restore Decision Center inputs", error);
-        window.localStorage.removeItem(SUBMITTED_INPUTS_STORAGE_KEY);
-      }
-    }
-
-    const snapshotStore = window.localStorage.getItem(SNAPSHOTS_STORAGE_KEY);
-    if (snapshotStore) {
-      try {
-        const parsedSnapshots = JSON.parse(snapshotStore) as ScenarioSnapshot[];
-        setScenarioSnapshots(parsedSnapshots);
-      } catch (error) {
-        console.error("Failed to restore Decision Center snapshots", error);
-        window.localStorage.removeItem(SNAPSHOTS_STORAGE_KEY);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    window.localStorage.setItem(SNAPSHOTS_STORAGE_KEY, JSON.stringify(scenarioSnapshots));
-  }, [scenarioSnapshots]);
-
-  // Calculate when submitted inputs change
-  useEffect(() => {
-    if (!submittedInputs) return;
-
-    const controller = new AbortController();
-    const timer = setTimeout(async () => {
-      setData((prev) => ({ ...prev, isCalculating: true }));
-      setErrorMessage(null);
-
-      try {
-        if (import.meta.env.DEV && import.meta.env.VITE_USE_HTTP_API !== "true") {
-          const local = calculateDecisionCenter(submittedInputs);
-          setData({ ...local, isCalculating: false, lastUpdated: new Date() });
-          return;
-        }
-
-        if (apiUnavailable) {
-          const local = calculateDecisionCenter(submittedInputs);
-          setData({ ...local, isCalculating: false, lastUpdated: new Date() });
-          return;
-        }
-
-        const res = await fetch("/api/decision-center", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(submittedInputs),
-          signal: controller.signal,
-        });
-
-        if (res.status === 404) {
-          setApiUnavailable(true);
-          const local = calculateDecisionCenter(submittedInputs);
-          setData({ ...local, isCalculating: false, lastUpdated: new Date() });
-          return;
-        }
-
-        if (!res.ok) {
-          throw new Error("Decision Center request failed");
-        }
-
-        const result = (await res.json()) as DecisionCenterData;
-        setData({ ...result, isCalculating: false, lastUpdated: new Date() });
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error(error);
-          const local = calculateDecisionCenter(submittedInputs);
-          setApiUnavailable(true);
-          setErrorMessage(
-            isId
-              ? "Analisis online gagal. Menggunakan engine lokal."
-              : "Online analysis failed. Using local engine.",
-          );
-          setData({ ...local, isCalculating: false, lastUpdated: new Date() });
-        }
-      }
-    }, 120);
-
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
-  }, [submittedInputs, apiUnavailable, isId]);
-
-  // Recalculate when scenario sliders change (if we have submitted data)
-  useEffect(() => {
-    if (!submittedInputs) return;
-
-    const timer = setTimeout(() => {
-      const inputsWithScenario = {
-        ...submittedInputs,
-        scenario: { ...inputs.scenario },
-      };
-      const local = calculateDecisionCenter(inputsWithScenario);
-      setData({ ...local, isCalculating: false, lastUpdated: new Date() });
-    }, 120);
-
-    return () => clearTimeout(timer);
-  }, [inputs.scenario, submittedInputs]);
-
   const updateEssentials = useCallback((values: Partial<EssentialInputs>) => {
     setInputs((prev) => ({
       ...prev,
       essentials: { ...prev.essentials, ...values },
     }));
-  }, []);
+  }, [setInputs]);
 
   const updateDelayRisk = useCallback((values: Partial<DelayRiskInputs>) => {
     setInputs((prev) => ({
       ...prev,
       delayRisk: { ...prev.delayRisk, ...values },
     }));
-  }, []);
+  }, [setInputs]);
 
   const canSubmit =
     missingEssentials.length === 0 && (!validateDelay || missingDelay.length === 0);
@@ -245,31 +153,17 @@ export function useDecisionCenter(language: "en" | "id") {
       delayRisk: { ...inputs.delayRisk },
     };
 
-    setSubmittedInputs(nextSubmittedInputs);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        SUBMITTED_INPUTS_STORAGE_KEY,
-        JSON.stringify(nextSubmittedInputs),
-      );
-    }
-
+    persistSubmittedInputs(nextSubmittedInputs);
     setSidebarOpen(false);
-  }, [canSubmit, inputs, isId, missingEssentials.length, validateDelay, missingDelay.length]);
+  }, [canSubmit, inputs, isId, missingEssentials.length, validateDelay, missingDelay.length, setErrorMessage, persistSubmittedInputs]);
 
   const handleClearData = useCallback(() => {
     setInputs(createEmptyInputs());
-    setSubmittedInputs(null);
-    setScenarioSnapshots([]);
+    clearPersistence();
     setErrorMessage(null);
     setApiUnavailable(false);
     setData(createEmptyData());
-
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(SUBMITTED_INPUTS_STORAGE_KEY);
-      window.localStorage.removeItem(SNAPSHOTS_STORAGE_KEY);
-    }
-  }, []);
+  }, [setInputs, clearPersistence, setErrorMessage, setApiUnavailable, setData]);
 
   const handleSaveSnapshot = useCallback(() => {
     const source = submittedInputs ?? inputs;
@@ -287,7 +181,7 @@ export function useDecisionCenter(language: "en" | "id") {
     };
 
     setScenarioSnapshots((prev) => [snapshot, ...prev].slice(0, 6));
-  }, [inputs, isId, scenarioSnapshots.length, submittedInputs]);
+  }, [inputs, isId, scenarioSnapshots.length, submittedInputs, setScenarioSnapshots]);
 
   const handleLoadSnapshot = useCallback(
     (snapshotId: string) => {
@@ -302,22 +196,15 @@ export function useDecisionCenter(language: "en" | "id") {
       };
 
       setInputs(restoredInputs);
-      setSubmittedInputs(restoredInputs);
+      persistSubmittedInputs(restoredInputs);
       setErrorMessage(null);
-
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(
-          SUBMITTED_INPUTS_STORAGE_KEY,
-          JSON.stringify(restoredInputs),
-        );
-      }
     },
-    [scenarioSnapshots],
+    [scenarioSnapshots, setInputs, persistSubmittedInputs, setErrorMessage],
   );
 
   const handleDeleteSnapshot = useCallback((snapshotId: string) => {
     setScenarioSnapshots((prev) => prev.filter((item) => item.id !== snapshotId));
-  }, []);
+  }, [setScenarioSnapshots]);
 
   return {
     sidebarOpen,
@@ -341,5 +228,7 @@ export function useDecisionCenter(language: "en" | "id") {
     handleSaveSnapshot,
     handleLoadSnapshot,
     handleDeleteSnapshot,
+    isPaid,
+    setIsPaid,
   };
 }

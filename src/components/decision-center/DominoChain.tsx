@@ -37,14 +37,14 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
   if (!chain || chain.nodes.length === 0) {
     return (
       <div className="max-w-6xl mx-auto">
-        <div className="text-center py-16">
-          <h3 className="font-fraunces text-2xl font-light text-ink dark:text-frost mb-4">
+        <div className="text-center py-16 rounded-xl border border-ink/4 dark:border-frost/8 bg-bone/50 dark:bg-charcoal/45">
+          <h2 className="font-fraunces text-2xl font-light text-ink dark:text-frost mb-4">
             {isId ? "Rantai Domino" : "Domino Chain"}
-          </h3>
-          <p className="font-sans text-ink/60 dark:text-frost/60">
+          </h2>
+          <p className="font-sans text-ink/60 dark:text-frost/64 max-w-lg mx-auto leading-relaxed">
             {isId 
-              ? "Data kas dan proyek diperlukan untuk melihat kaskade risiko."
-              : "Cash and project data required to see risk cascade."
+              ? "Tidak ada kaskade lanjutan yang perlu divisualisasikan. Untuk kondisi ini, bagian ini belum diperlukan."
+              : "There is no follow-on cascade that needs to be visualized. For this situation, this section is not needed yet."
             }
           </p>
         </div>
@@ -54,31 +54,31 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
 
   const colorStyles = {
     scarlet: {
-      bg: 'bg-scarlet/[0.03]',
+      bg: 'bg-scarlet/3',
       border: 'border-scarlet/15',
       text: 'text-scarlet',
       icon: 'text-scarlet/60',
       line: 'bg-scarlet/20',
     },
     amber: {
-      bg: 'bg-amber-500/[0.03]',
+      bg: 'bg-amber-500/3',
       border: 'border-amber-500/15',
       text: 'text-amber-600',
       icon: 'text-amber-500/60',
       line: 'bg-amber-500/20',
     },
     steel: {
-      bg: 'bg-steel/[0.03]',
+      bg: 'bg-steel/3',
       border: 'border-steel/15',
       text: 'text-steel',
       icon: 'text-steel/60',
       line: 'bg-steel/20',
     },
     neutral: {
-      bg: 'bg-ink/[0.02] dark:bg-frost/[0.02]',
-      border: 'border-ink/8 dark:border-frost/8',
+      bg: 'bg-ink/2 dark:bg-charcoal-soft/70',
+      border: 'border-ink/8 dark:border-frost/10',
       text: 'text-ink/60 dark:text-frost/60',
-      icon: 'text-ink/30 dark:text-frost/30',
+      icon: 'text-ink/44 dark:text-frost/54',
       line: 'bg-ink/10 dark:bg-frost/10',
     },
   };
@@ -89,9 +89,9 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
       <div className="mb-12">
         <div className="flex items-center justify-between flex-wrap gap-6">
           <div>
-            <h3 className="font-fraunces text-2xl font-light text-ink dark:text-frost mb-3">
+            <h2 className="font-fraunces text-2xl font-light text-ink dark:text-frost mb-3">
               {isId ? "Rantai Domino" : "Domino Chain"}
-            </h3>
+            </h2>
             <p className="font-sans text-[14px] text-ink/60 dark:text-frost/60 max-w-xl leading-relaxed">
               {isId 
                 ? "Kaskade konsekuensi yang dapat terjadi. Setiap domino mempengaruhi yang berikutnya secara berurutan."
@@ -100,8 +100,8 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
             </p>
           </div>
           
-          <div className="px-6 py-4 rounded-xl bg-scarlet/[0.03] border border-scarlet/10">
-            <p className="font-sans text-[11px] text-ink/40 dark:text-frost/40 mb-1">
+          <div className="px-6 py-4 rounded-xl bg-scarlet/3 border border-scarlet/10">
+            <p className="font-sans text-[11px] text-ink/52 dark:text-frost/60 mb-1">
               {isId ? "Probabilitas kaskade" : "Cascade probability"}
             </p>
             <p className="font-fraunces text-3xl font-light text-scarlet">
@@ -123,7 +123,7 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
               <React.Fragment key={node.step}>
                 {/* Domino Card */}
                 <div 
-                  className={`flex-shrink-0 w-64 p-6 rounded-xl border ${styles.bg} ${styles.border} transition-colors hover:${styles.border.replace('/15', '/25')}`}
+                  className={`shrink-0 w-64 p-6 rounded-xl border ${styles.bg} ${styles.border} transition-colors hover:${styles.border.replace('/15', '/25')}`}
                 >
                   {/* Header */}
                   <div className="flex items-center gap-3 mb-4">
@@ -149,7 +149,7 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
                   {/* Probability Badge */}
                   <div className="mt-4 pt-4 border-t border-ink/5 dark:border-frost/5">
                     <div className="flex items-center justify-between">
-                      <span className="font-sans text-[11px] text-ink/40">
+                      <span className="font-sans text-[11px] text-ink/52 dark:text-frost/60">
                         {isId ? "Probabilitas" : "Probability"}
                       </span>
                       <span className={`font-sans text-[13px] font-medium ${styles.text}`}>
@@ -161,7 +161,7 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
 
                 {/* Connector Line */}
                 {!isLast && (
-                  <div className="flex-shrink-0 w-8 flex items-center justify-center">
+                  <div className="shrink-0 w-8 flex items-center justify-center">
                     <div className={`w-full h-px ${styles.line}`} />
                   </div>
                 )}
@@ -173,7 +173,7 @@ export function DominoChain({ chain, isCalculating }: DominoChainProps) {
         {/* Scroll Indicator */}
         {chain.nodes.length > 4 && (
           <div className="mt-4 text-center">
-            <p className="font-sans text-[11px] text-ink/30 dark:text-frost/30">
+            <p className="font-sans text-[11px] text-ink/48 dark:text-frost/56">
               {isId ? "Geser untuk melihat semua langkah →" : "Scroll to see all steps →"}
             </p>
           </div>

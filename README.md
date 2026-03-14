@@ -1,96 +1,40 @@
 # Novaris
 
-Novaris is a desktop-first decision system for business owners. It connects operational delay risk and financial risk so teams can decide faster with clearer evidence.
+Novaris is a premium, desktop-first decision intelligence system for business owners. It bridges operational risk and financial resilience, enabling owners to execute with conviction.
 
-## What Novaris does
+## Current Status: Professional Beta
+Novaris is currently in a **Professional Beta** phase. All intelligence and simulation features are open for testing at no cost.
 
-- Runs two connected simulations:
-  - Financial risk (`/financial`)
-  - Delay risk (`/delay`)
-- Converts delay into business impact (time, probability, and financial pressure)
-- Uses objective inputs only (no free-form AI judgment fields)
-- Provides narrative guidance in English and Bahasa Indonesia
+- **Status**: Free During Beta
+- **Focus**: User feedback and engine refinement
 
-## Core model design
+## Core Intelligence: The Decision Center
 
-### 1) Financial engine
+The unified **Decision Center** combines multiple risk layers into a single, interactive dashboard:
 
-The financial engine estimates:
+- **Strategic Verdict**: Narrative guidance generated from live financial and operational data.
+- **Financial Architecture**: Real-time tracking of Revenue Gap, Cash Runway, and Daily Burn.
+- **Risk Inventory**: Automatic identification of triggers (thin buffers, client dependency).
+- **Domino Chain**: Visualizing how operational delays cascade into financial pressure.
+- **Interactive Scenarios**: Test the impact of cash injections or overhead reductions instantly.
 
-- Survival probability
-- Cash runway (months)
-- Resilience shields (how many shocks the business can absorb)
-- Risk drivers and mitigation suggestions
+## Premium Visual Experience
 
-It uses Monte Carlo simulation and stress scenarios (sales shock, delay shock, and concurrent shocks).
+Novaris uses a high-end, consulting-grade aesthetic to make complex data readable:
 
-### 2) Delay engine
+- **Smooth Transitions**: Global route transitions masked by a 800ms fade-out loading overlay.
+- **Scroll Animations**: Dynamic section reveals as you scroll through the landing page.
+- **Responsive Simplicity**: Clean, Swiss-inspired design optimized for high-stakes decision making.
 
-The delay engine estimates:
+## Core Engines
 
-- Delay probability
-- Expected duration
-- Delay range (optimistic to pessimistic)
-- Critical bottlenecks
-- Mitigation suggestions
+### 1) Financial Engine
+Estimates survival probability, cash runway, and resilience shields using Monte Carlo simulations and stress scenarios.
 
-It combines objective factors such as complexity, team ratio, supplier variance, external dependencies, historical delay rate, and remaining buffer.
+### 2) Delay Engine
+Calculates delay probability and duration based on objective project factors (buffer, team size, dependency).
 
-## How confidence is handled (important)
-
-Novaris accepts optional management confidence (`managementConfidence`) in the delay API, but confidence is intentionally bounded.
-
-- Confidence does not replace objective risk data.
-- Confidence can only adjust probability in a small range (max +/-12%).
-- If stated confidence conflicts with objective signals, the objective signals dominate.
-
-This avoids false certainty and keeps the model explainable.
-
-## When delay monitoring is activated
-
-Delay monitoring turns active when one or more trigger conditions are met:
-
-- Expected completion exceeds target contract duration
-- Predicted delay consumes remaining buffer
-- Delay probability crosses watch threshold
-- Top bottleneck impact is larger than remaining buffer
-
-The API returns:
-
-- `delayMonitoringActive`
-- `delayMonitoringState` (`inactive`, `watch`, `active`, `critical`)
-- `delayActivationReasons`
-
-These are shown in the Delay simulator so owners know exactly why monitoring is active.
-
-## API endpoints
-
-- `POST /api/financial`
-- `POST /api/delay`
-
-Both routes validate payloads with Zod and run the canonical engine in `src/lib/engine/*`.
-
-## Input UX behavior
-
-- Controls are collapsible so users can focus on results.
-- Active section shows all inputs at once (no hidden next-step flow).
-- Inputs auto-save with clear status (`Saving...` -> `Saved`).
-- Number fields support dot grouping for readability (e.g., `1.250.000`).
-
-## Internationalization and currency
-
-- Languages: English (`en`) and Bahasa Indonesia (`id`)
-- Financial currency: USD and IDR
-- Live FX fetch for USD -> IDR conversion with cached fallback
-
-## SEO and metadata
-
-- Route-level SEO titles/descriptions
-- Open Graph and Twitter metadata
-- Route-specific JSON-LD structured data
-- `robots.txt` and `sitemap.xml`
-
-## Run locally
+## Local Development
 
 ```bash
 npm install
@@ -103,6 +47,6 @@ Build:
 npm run build
 ```
 
-## Deploy
+## Deployment
 
-This project is deployable on Vercel with API routes under `/api/*` and SPA fallback configured.
+Optimized for Vercel with built-in SPA routing and API fallbacks.

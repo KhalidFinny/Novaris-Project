@@ -11,7 +11,7 @@ export function SolutionSection() {
   return (
     <section
       id="platform"
-      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-transparent dark:bg-transparent transition-colors duration-520"
+      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-bone dark:bg-charcoal transition-colors duration-520"
     >
       <div className="max-w-content mx-auto">
         {/* 2-col grid */}
@@ -19,8 +19,8 @@ export function SolutionSection() {
           {/* Left */}
           <div>
             <div
-              className="flex items-center gap-2.5 mb-4.5
-                            font-mono text-[9px] tracking-widest uppercase
+               className="flex items-center gap-2.5 mb-4.5
+                             font-mono text-[12px] tracking-[0.16em] uppercase
                             text-scarlet dark:text-scarlet-bright"
             >
               <span
@@ -40,15 +40,15 @@ export function SolutionSection() {
                 {isId ? "cara kerja Anda." : "how you work."}
               </span>
             </h2>
-            <p className="font-sans font-light text-base text-ink/70 dark:text-frost/70 leading-relaxed max-w-[40ch] mb-8">
+             <p className="font-sans font-light text-[20px] text-ink/72 dark:text-frost/78 leading-relaxed max-w-[42ch] mb-8">
               {isId
                 ? "Novaris terhubung ke tools Anda, memetakan eksposur secara otomatis, dan hanya menampilkan hal yang benar-benar perlu perhatian."
                 : "Novaris connects to your tools, maps your exposure automatically, and surfaces only what needs your attention — without demanding your time every day."}
             </p>
             <Link
               to="/financial"
-              className="inline-flex font-sans font-semibold text-[11.5px] uppercase tracking-wider
-                         px-7 py-3 rounded-card
+               className="inline-flex font-sans font-semibold text-[13px] uppercase tracking-[0.14em]
+                          px-7 py-3.5 rounded-card
                          bg-scarlet dark:bg-scarlet-bright text-white
                          hover:bg-scarlet-dark dark:hover:bg-scarlet-hover hover:-translate-y-0.5
                          transition-all duration-200 ease-spring border-0 cursor-pointer no-underline"
@@ -69,23 +69,23 @@ export function SolutionSection() {
               >
                 {/* Index */}
                 <span
-                  className="font-mono text-[9.5px] tracking-wider text-ink/30 dark:text-frost/28 pt-0.5
-                                 group-hover:text-scarlet dark:group-hover:text-scarlet-bright transition-colors duration-200"
+                   className="font-mono text-[12px] tracking-[0.08em] text-ink/48 dark:text-frost/60 pt-0.5
+                                  group-hover:text-scarlet dark:group-hover:text-scarlet-bright transition-colors duration-200"
                 >
                   {f.n}
                 </span>
                 {/* Text */}
                 <div>
-                  <div className="font-sans font-medium text-[13.5px] text-ink dark:text-frost mb-0.5">
+                   <div className="font-sans font-medium text-[18px] text-ink dark:text-frost mb-1.5">
                     {f.label}
                   </div>
-                  <div className="font-sans font-light text-xs text-ink/30 dark:text-frost/28 leading-snug">
+                   <div className="font-sans font-light text-[17px] text-ink/62 dark:text-frost/74 leading-relaxed">
                     {f.desc}
                   </div>
                 </div>
                 {/* Arrow */}
                 <span
-                  className="font-sans text-[12px] text-scarlet dark:text-scarlet-bright pt-0.5
+                  className="font-sans text-[15px] text-scarlet dark:text-scarlet-bright pt-0.5
                                  opacity-0 -translate-x-1
                                  group-hover:opacity-100 group-hover:translate-x-0
                                  transition-all duration-200 ease-spring"

@@ -27,29 +27,20 @@ export interface Benefit {
     body: string;
 }
 
-export interface Plan {
-    name: string;
-    desc: string;
-    tag: string;
-    popular: boolean;
-}
-
 export const DAY_ONE_FEATURES: DayOneFeature[] = [
-    { label: 'Live risk dashboard', included: true },
-    { label: 'Operational risk map', included: true },
-    { label: 'Compliance monitoring', included: true },
-    { label: 'Smart alert routing', included: true },
-    { label: 'Scenario modeling (Growth+)', included: false },
-    { label: 'Team access (Growth+)', included: false },
+    { label: 'Presentation-ready PDF report', included: true },
+    { label: 'Excel sheet with all calculations', included: true },
+    { label: 'Immediate download on checkout', included: true },
+    { label: 'Actionable decision narratives', included: true },
+    { label: 'One-time $1.50 payment', included: true },
 ];
 
 export const DAY_ONE_FEATURES_ID: DayOneFeature[] = [
-    { label: 'Dashboard risiko real-time', included: true },
-    { label: 'Peta risiko operasional', included: true },
-    { label: 'Monitoring kepatuhan', included: true },
-    { label: 'Routing alert pintar', included: true },
-    { label: 'Pemodelan skenario (Growth+)', included: false },
-    { label: 'Akses tim (Growth+)', included: false },
+    { label: 'Laporan PDF siap presentasi', included: true },
+    { label: 'Sheet Excel dengan semua kalkulasi', included: true },
+    { label: 'Unduhan instan setelah pembayaran', included: true },
+    { label: 'Narasi keputusan untuk action', included: true },
+    { label: 'Satu kali bayar $1.50', included: true },
 ];
 
 // Stats for the Problem section stat rows
@@ -205,16 +196,4 @@ export const BENEFITS_ID: Benefit[] = [
         headline: 'Manajemen risiko tidak lagi jadi beban kerja',
         body: 'Setup sekali, monitor terus. Novaris berjalan di latar belakang agar Anda fokus membangun bisnis.',
     },
-];
-
-export const PLANS: Plan[] = [
-    { name: 'Starter', desc: 'For solo owners and small teams', tag: 'Free to try', popular: false },
-    { name: 'Growth', desc: 'For scaling businesses, full feature set', tag: 'Most popular', popular: true },
-    { name: 'Enterprise', desc: 'Custom integrations, dedicated support', tag: 'Contact us', popular: false },
-];
-
-export const PLANS_ID: Plan[] = [
-    { name: 'Starter', desc: 'Untuk owner solo dan tim kecil', tag: 'Gratis dicoba', popular: false },
-    { name: 'Growth', desc: 'Untuk bisnis berkembang, fitur lengkap', tag: 'Paling populer', popular: true },
-    { name: 'Enterprise', desc: 'Integrasi kustom, dukungan prioritas', tag: 'Hubungi kami', popular: false },
 ];

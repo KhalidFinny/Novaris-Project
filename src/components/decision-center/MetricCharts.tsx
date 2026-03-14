@@ -2,6 +2,15 @@ import React from "react";
 import type { ChartData } from "../../types/decisionCenter";
 import { useLocale } from "../../hooks/useLocale";
 import { Info } from "lucide-react";
+import { getScoreLabel } from "../../lib/decision-center/utils";
+import { 
+  getMetricTone, 
+  getChartTooltipStyle, 
+  getRevenueGapData, 
+  getRevenueGapOptions, 
+  getMonteCarloData, 
+  getMonteCarloOptions 
+} from "../../lib/decision-center/chartConfigs";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,21 +36,25 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface MetricChartsProps {
   data: ChartData | null;
   isCalculating: boolean;
+  revenueGapRef?: React.RefObject<any>;
+  monteCarloRef?: React.RefObject<any>;
 }
 
 function ChartTitle({ title, help }: { title: string; help: string }) {
   return (
     <div className="flex items-center gap-2">
-      <h4 className="font-sans text-[15px] font-medium text-ink dark:text-frost">{title}</h4>
+      <h3 className="font-sans text-[20px] font-medium text-ink dark:text-frost">
+        {title}
+      </h3>
       <span className="group relative inline-flex items-center">
-        <Info size={12} className="text-ink/28 dark:text-frost/28" />
-        <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 rounded-xl border border-ink/[0.06] bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/70 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/[0.08] dark:bg-charcoal dark:text-frost/72">
+        <Info size={12} className="text-ink/30 dark:text-frost/36" />
+        <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 rounded-xl border border-ink/6 bg-bone px-3 py-2 font-sans text-[12px] leading-relaxed text-ink/72 opacity-0 transition-opacity group-hover:opacity-100 dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost/78">
           {help}
         </span>
       </span>
@@ -49,7 +62,13 @@ function ChartTitle({ title, help }: { title: string; help: string }) {
   );
 }
 
-export function MetricCharts({ data, isCalculating }: MetricChartsProps) {
+
+export function MetricCharts({ 
+  data, 
+  isCalculating,
+  revenueGapRef,
+  monteCarloRef
+}: MetricChartsProps) {
   const { language, formatCurrency } = useLocale();
   const isId = language === "id";
 
@@ -57,18 +76,23 @@ export function MetricCharts({ data, isCalculating }: MetricChartsProps) {
     return (
       <div>
         <div className="mb-8">
-          <h3 className="font-fraunces text-3xl font-light text-ink dark:text-frost mb-2">
-            {isId ? "Grafik Metrik" : "Metric Charts"}
-          </h3>
-          <p className="font-sans text-ink/60 dark:text-frost/60">
-            {isId ? "Memuat data..." : "Loading data..."}
+          <h2 className="font-fraunces text-3xl font-light text-ink dark:text-frost mb-2">
+            {isId ? "Bukti Angka" : "Evidence"}
+          </h2>
+          <p className="font-sans text-ink/62 dark:text-frost/64">
+            {isId ? "Menyiapkan pembacaan visual..." : "Preparing visual readout..."}
           </p>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className={`rounded-2xl border border-ink/[0.04] p-6 dark:border-frost/[0.04] animate-pulse ${i === 3 ? "xl:col-span-2 h-72" : "h-96"}`}>
-              <div className="h-4 bg-ink/5 dark:bg-frost/5 rounded w-1/3 mb-4" />
-              <div className="h-full bg-ink/5 dark:bg-frost/5 rounded" />
+            <div
+              key={i}
+              className={`rounded-xl border border-ink/4 p-6 dark:border-frost/8 animate-pulse ${
+                i === 3 ? "xl:col-span-2 h-72" : "h-96"
+              }`}
+            >
+              <div className="h-4 w-1/3 rounded bg-ink/5 dark:bg-charcoal-soft/80 mb-4" />
+              <div className="h-full rounded bg-ink/5 dark:bg-charcoal-soft/80" />
             </div>
           ))}
         </div>
@@ -76,349 +100,177 @@ export function MetricCharts({ data, isCalculating }: MetricChartsProps) {
     );
   }
 
-  // Revenue Gap Chart Data
-  const revenueGapData = {
-    labels: data.revenueGap.weeks,
-    datasets: [
-      {
-        label: isId ? "Aktual" : "Actual",
-        data: data.revenueGap.actual,
-        backgroundColor: "rgba(120, 113, 108, 0.7)",
-        borderColor: "rgba(120, 113, 108, 1)",
-        borderWidth: 1,
-        borderRadius: 4,
-        order: 2,
-      },
-      {
-        label: isId ? "Target" : "Target",
-        data: data.revenueGap.target,
-        type: "line" as const,
-        borderColor: "rgba(16, 185, 129, 1)",
-        backgroundColor: "rgba(16, 185, 129, 0.1)",
-        borderWidth: 2,
-        borderDash: [5, 5],
-        pointRadius: 4,
-        pointBackgroundColor: "rgba(16, 185, 129, 1)",
-        fill: true,
-        tension: 0.4,
-        order: 1,
-      },
-      {
-        label: isId ? "Proyeksi" : "Projected",
-        data: data.revenueGap.projected,
-        type: "line" as const,
-        borderColor: "rgba(204, 31, 46, 0.6)",
-        backgroundColor: "rgba(204, 31, 46, 0.05)",
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: "rgba(204, 31, 46, 1)",
-        borderDash: [3, 3],
-        tension: 0.4,
-        order: 3,
-      },
-    ],
-  };
+  const lfiTone = getMetricTone(data.lfi.score);
+  const lfiStatus = isId
+    ? getScoreLabel(data.lfi.score, true)
+    : lfiTone.label;
 
+  const revenueGapData = getRevenueGapData(data, isId);
   const revenueGapOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-      intersect: false,
-      mode: "index" as const,
-    },
+    ...getRevenueGapOptions(isId),
     plugins: {
-      legend: {
-        position: "bottom" as const,
-        labels: {
-          usePointStyle: true,
-          padding: 20,
-          font: {
-            size: 12,
-            family: "sans-serif",
-          },
-        },
-      },
+      ...getRevenueGapOptions(isId).plugins,
       tooltip: {
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        titleColor: "#1c1917",
-        bodyColor: "#1c1917",
-        borderColor: "rgba(28, 25, 23, 0.1)",
-        borderWidth: 1,
-        padding: 12,
+        ...getChartTooltipStyle(document.documentElement.classList.contains("dark")),
         callbacks: {
           label: (context: any) => {
             const label = context.dataset.label || "";
-            const value = context.parsed.y;
-            return `${label}: ${formatCurrency(value)}`;
+            return `${label}: ${formatCurrency(context.parsed.y)}`;
           },
         },
       },
     },
     scales: {
+      ...getRevenueGapOptions(isId).scales,
       y: {
-        beginAtZero: true,
-        grid: {
-          color: "rgba(28, 25, 23, 0.05)",
-        },
+        ...getRevenueGapOptions(isId).scales.y,
         ticks: {
+          ...getRevenueGapOptions(isId).scales.y.ticks,
           callback: (value: any) => formatCurrency(Number(value)),
-          font: {
-            size: 11,
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
         },
       },
     },
   };
 
-  // Monte Carlo Chart Data
-  const monteCarloData = {
-    labels: [isId ? "Terburuk" : "Worst", isId ? "Dasar" : "Base", isId ? "Terbaik" : "Best"],
-    datasets: [
-      {
-        label: isId ? "Probabilitas" : "Probability",
-        data: [
-          data.monteCarlo.worst.probability,
-          data.monteCarlo.base.probability,
-          data.monteCarlo.best.probability,
-        ],
-        backgroundColor: [
-          "rgba(204, 31, 46, 0.7)",
-          "rgba(120, 113, 108, 0.7)",
-          "rgba(16, 185, 129, 0.7)",
-        ],
-        borderColor: [
-          "rgba(204, 31, 46, 1)",
-          "rgba(120, 113, 108, 1)",
-          "rgba(16, 185, 129, 1)",
-        ],
-        borderWidth: 1,
-        borderRadius: 8,
-        borderSkipped: false,
-      },
-    ],
-  };
-
+  const monteCarloData = getMonteCarloData(data, isId);
   const monteCarloOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
+    ...getMonteCarloOptions(isId),
     plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        titleColor: "#1c1917",
-        bodyColor: "#1c1917",
-        borderColor: "rgba(28, 25, 23, 0.1)",
-        borderWidth: 1,
-        padding: 12,
-        callbacks: {
-          label: (context: any) => {
-            const value = context.parsed.y;
-            return `${value}% probability`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100,
-        grid: {
-          color: "rgba(28, 25, 23, 0.05)",
-        },
-        ticks: {
-          callback: (value: any) => `${value}%`,
-          font: {
-            size: 11,
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 12,
-            weight: 500 as const,
-          },
-        },
-      },
+      ...getMonteCarloOptions(isId).plugins,
+      tooltip: getChartTooltipStyle(document.documentElement.classList.contains("dark")),
     },
   };
 
   return (
     <div>
       <div className="mb-8">
-        <h3 className="font-fraunces text-3xl font-light text-ink dark:text-frost mb-2">
-          {isId ? "Grafik Metrik" : "Metric Charts"}
-        </h3>
-        <p className="font-sans text-ink/60 dark:text-frost/60">
-          {isId ? "Visualisasi data untuk memahami posisi bisnis Anda." : "Data visualizations to understand your business position."}
+        <h2 className="font-fraunces text-3xl font-light text-ink dark:text-frost mb-2">
+          {isId ? "Bukti pendukung" : "Supporting evidence"}
+        </h2>
+        <p className="font-sans text-ink/62 dark:text-frost/64">
+          {isId
+            ? "Tiga pembacaan yang menunjukkan di mana tekanan terbesar sekarang."
+            : "Three reads that show where the pressure is right now."}
         </p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Revenue Gap Chart */}
-        <div className="rounded-xl p-6 border border-ink/[0.04] dark:border-frost/[0.04]">
-          <div className="mb-4">
+        <div className="rounded-xl p-6 border border-ink/4 dark:border-frost/8 bg-bone/60 dark:bg-charcoal/55">
+          <div className="mb-5">
             <ChartTitle
-              title={isId ? "Gap Pendapatan" : "Revenue Gap"}
-              help={isId ? "Membandingkan pendapatan aktual dengan target atau titik impas." : "Compares actual revenue with target or break-even point."}
+              title={isId ? "Apakah pemasukan cukup?" : "Is income enough?"}
+              help={isId ? "Membandingkan pemasukan aktual dengan target atau titik impas." : "Compares actual inflow with target or break-even."}
             />
-            <p className="font-sans text-[13px] text-ink/50 dark:text-frost/50 mt-1">
-              {isId ? "Garis hijau = target, Batang abu = aktual, Garis merah putus-putus = proyeksi" : "Green line = target, Grey bars = actual, Red dashed = projected"}
+            <p className="mt-2 font-sans text-[15px] text-ink/62 dark:text-frost/70 leading-relaxed">
+              {isId
+                ? "Grafik ini menunjukkan apakah uang masuk Anda benar-benar menutup kebutuhan rutin bisnis."
+                : "This chart shows whether the money coming in is truly covering the business's regular needs."}
             </p>
           </div>
 
           <div className="h-80">
-            <Bar data={revenueGapData as any} options={revenueGapOptions} />
+            <Bar ref={revenueGapRef} data={revenueGapData as never} options={revenueGapOptions as never} />
           </div>
         </div>
 
-        {/* Liquidity Fragility Index */}
-        <div className="rounded-xl p-6 border border-ink/[0.04] dark:border-frost/[0.04]">
-          <div className="mb-4">
-            <ChartTitle
-              title={isId ? "Indeks Kerapuhan Likuiditas" : "Liquidity Fragility Index"}
-              help={isId ? "Skor ringkas seberapa rapuh posisi uang Anda (0 = aman, 100 = kritis)." : "A compact score showing how fragile your money position is (0 = safe, 100 = critical)."}
-            />
-          </div>
-
-          <div className="flex flex-col items-center">
-            {/* Gauge */}
-            <div className="relative w-64 h-32 overflow-hidden mb-6">
-              <div className="absolute inset-0 rounded-t-full"
-                style={{
-                  background: "linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #cc1f2e 100%)",
-                }}
-              />
-              <div className="absolute bottom-0 left-1/2 w-1.5 h-32 bg-ink dark:bg-frost origin-bottom transition-transform duration-700"
-                style={{ 
-                  transform: `translateX(-50%) rotate(${-90 + (data.lfi.score / 100) * 180}deg)`,
-                }}
-              />
-              
-              {/* Score indicator */}
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2"
-                style={{
-                  transform: `translateX(-50%) rotate(${-90 + (data.lfi.score / 100) * 180}deg) translateY(-110px) rotate(${90 - (data.lfi.score / 100) * 180}deg)`,
-                }}
-              >
-                <div className="w-3 h-3 rounded-full bg-ink dark:bg-frost" />
-              </div>
-            </div>
-
-            {/* Score Display */}
-            <div className="text-center mb-6">
-              <div className={`font-fraunces text-6xl font-light ${
-                data.lfi.score >= 70 ? 'text-scarlet' : 
-                data.lfi.score >= 40 ? 'text-amber-500' : 'text-emerald-500'
-              }`}>
-                {data.lfi.score.toFixed(0)}
-              </div>              
-              <p className="font-sans text-[13px] text-ink/50 dark:text-frost/50 mt-1">
-                {data.lfi.score >= 70 ? (isId ? "Kritis" : "Critical") : 
-                 data.lfi.score >= 40 ? (isId ? "Waspada" : "Caution") : 
-                 (isId ? "Aman" : "Safe")}
-              </p>
-            </div>
-
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-3 gap-4 w-full">
-              <div className="text-center p-3 rounded-xl bg-ink/[0.02] dark:bg-frost/[0.02]">
-                <p className="font-sans text-[11px] text-ink/50 dark:text-frost/50 mb-1">
-                  {isId ? "Cakupan Hari" : "Days Cover"}
-                </p>
-                <p className="font-fraunces text-xl text-ink dark:text-frost">
-                  {data.lfi.daysCover}
-                </p>
-              </div>
-
-              <div className="text-center p-3 rounded-xl bg-ink/[0.02] dark:bg-frost/[0.02]">
-                <p className="font-sans text-[11px] text-ink/50 dark:text-frost/50 mb-1">
-                  {isId ? "Rasio Lancar" : "Current Ratio"}
-                </p>
-                <p className="font-fraunces text-xl text-ink dark:text-frost">
-                  {data.lfi.currentRatio.toFixed(2)}
-                </p>
-              </div>
-
-              <div className="text-center p-3 rounded-xl bg-ink/[0.02] dark:bg-frost/[0.02]">
-                <p className="font-sans text-[11px] text-ink/50 dark:text-frost/50 mb-1">
-                  {isId ? "Piutang Risiko" : "AR at Risk"}
-                </p>
-                <p className="font-fraunces text-xl text-ink dark:text-frost">
-                  {formatCurrency(data.lfi.arAtRisk)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Monte Carlo Simulation */}
-        <div className="rounded-xl p-6 border border-ink/[0.04] dark:border-frost/[0.04] xl:col-span-2">
+        <div className={`rounded-xl p-6 border ${lfiTone.border} ${lfiTone.soft}`}>
           <div className="mb-6">
             <ChartTitle
-              title={isId ? "Simulasi Monte Carlo" : "Monte Carlo Simulation"}
-              help={isId ? "Distribusi kemungkinan hasil dari 10.000 simulasi untuk memahami rentang risiko." : "Probability distribution from 10,000 simulations to understand risk range."}
+              title={isId ? "Seberapa aman posisi kas Anda?" : "How safe is your cash position?"}
+              help={isId ? "Ini adalah ringkasan cepat tentang seberapa mudah posisi uang Anda bisa terguncang." : "This is a quick summary of how easily your money position could get shaken."}
             />
-            <p className="font-sans text-[13px] text-ink/50 dark:text-frost/50 mt-1">
-              {isId ? "Menunjukkan probabilitas berbagai skenario hasil" : "Shows probability of different outcome scenarios"}
+            <p className="mt-2 font-sans text-[15px] text-ink/62 dark:text-frost/70 leading-relaxed">
+              {isId
+                ? "Semakin tinggi angkanya, semakin kecil ruang aman Anda jika ada gangguan baru."
+                : "The higher the score, the less room you have if another disruption hits."}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="h-72">
-              <Bar data={monteCarloData} options={monteCarloOptions} />
+          <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.75fr] gap-8 items-end">
+            <div>
+              <div className={`font-fraunces text-[clamp(96px,12vw,144px)] leading-[0.86] ${lfiTone.text}`}>
+                {data.lfi.score.toFixed(0)}
+              </div>
+              <p className={`mt-3 font-sans text-[18px] ${lfiTone.text}`}>
+                {lfiStatus}
+              </p>
+              <p className="mt-5 max-w-xl font-sans text-[15px] leading-relaxed text-ink/68 dark:text-frost/72">
+                {isId
+                  ? `Skor ini menggabungkan runway ${data.lfi.daysCover} hari, current ratio ${data.lfi.currentRatio.toFixed(2)}, dan piutang berisiko ${formatCurrency(data.lfi.arAtRisk)}.`
+                  : `This score combines ${data.lfi.daysCover} days of cover, a ${data.lfi.currentRatio.toFixed(2)} current ratio, and ${formatCurrency(data.lfi.arAtRisk)} at-risk receivables.`}
+              </p>
             </div>
 
-            <div className="lg:col-span-2 grid grid-cols-3 gap-4">
-              <div className="p-5 rounded-xl bg-scarlet/5 border border-scarlet/10 text-center">
-                <p className="font-sans text-[12px] text-ink/50 dark:text-frost/50 mb-2">
-                  {isId ? "Kasus Terburuk" : "Worst Case"}
-                </p>
-                <p className="font-fraunces text-4xl text-scarlet dark:text-scarlet-bright mb-1">
-                  {data.monteCarlo.worst.probability}%
-                </p>
-                <p className="font-sans text-[12px] text-ink/40 dark:text-frost/40">
-                  {isId ? "Probabilitas" : "Probability"}
-                </p>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2 font-sans text-[13px] text-ink/48 dark:text-frost/56">
+                  <span>{isId ? "Skor tekanan kas" : "Cash pressure score"}</span>
+                  <span className={`text-[15px] ${lfiTone.text}`}>{data.lfi.score.toFixed(0)}/100</span>
+                </div>
+                <div className="h-2 rounded-full bg-ink/6 dark:bg-charcoal-light overflow-hidden">
+                  <div className={`h-full ${lfiTone.fill}`} style={{ width: `${data.lfi.score}%` }} />
+                </div>
               </div>
 
-              <div className="p-5 rounded-xl bg-steel/5 border border-steel/10 text-center">
-                <p className="font-sans text-[12px] text-ink/50 dark:text-frost/50 mb-2">
-                  {isId ? "Kasus Dasar" : "Base Case"}
-                </p>
-                <p className="font-fraunces text-4xl text-steel dark:text-steel-bright mb-1">
-                  {data.monteCarlo.base.probability}%
-                </p>
-                <p className="font-sans text-[12px] text-ink/40 dark:text-frost/40">
-                  {isId ? "Probabilitas" : "Probability"}
-                </p>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="rounded-lg border border-ink/5 dark:border-frost/8 px-4 py-4 bg-bone/70 dark:bg-charcoal-soft/80">
+                  <p className="font-sans text-[11px] text-ink/46 dark:text-frost/52">{isId ? "Hari aman" : "Days covered"}</p>
+                  <p className="mt-1 font-fraunces text-[32px] leading-none text-ink dark:text-frost">{data.lfi.daysCover}</p>
+                </div>
+                <div className="rounded-lg border border-ink/5 dark:border-frost/8 px-4 py-4 bg-bone/70 dark:bg-charcoal-soft/80">
+                  <p className="font-sans text-[11px] text-ink/46 dark:text-frost/52">{isId ? "Rasio kas lancar" : "Current ratio"}</p>
+                  <p className="mt-1 font-fraunces text-[32px] leading-none text-ink dark:text-frost">{data.lfi.currentRatio.toFixed(2)}</p>
+                </div>
+                <div className="rounded-lg border border-ink/5 dark:border-frost/8 px-4 py-4 bg-bone/70 dark:bg-charcoal-soft/80">
+                  <p className="font-sans text-[11px] text-ink/46 dark:text-frost/52">{isId ? "Tagihan tertahan" : "Receivables at risk"}</p>
+                  <p className="mt-1 font-fraunces text-[28px] leading-none text-ink dark:text-frost wrap-break-word">{formatCurrency(data.lfi.arAtRisk)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl p-6 border border-ink/4 dark:border-frost/8 xl:col-span-2 bg-bone/60 dark:bg-charcoal/55">
+          <div className="mb-6">
+            <ChartTitle
+              title={isId ? "Rentang hasil yang mungkin" : "Likely outcome range"}
+              help={isId ? "Bagian ini membantu Anda melihat hasil buruk, normal, dan terbaik yang masih masuk akal." : "This helps you see the bad, normal, and best outcomes that still look realistic."}
+            />
+            <p className="mt-2 font-sans text-[15px] text-ink/62 dark:text-frost/70 leading-relaxed">
+              {isId
+                ? "Ini bukan satu prediksi pasti, tetapi batas bawah, tengah, dan atas yang layak Anda siapkan."
+                : "This is not one fixed forecast, but the lower, middle, and upper outcome you should be prepared for."}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8 items-stretch">
+            <div className="h-80">
+              <Bar ref={monteCarloRef} data={monteCarloData} options={monteCarloOptions as never} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="rounded-xl border border-scarlet/12 bg-scarlet/4 p-7 flex flex-col justify-between min-h-[280px]">
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus terburuk" : "Worst case"}</p>
+                <div>
+                  <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-scarlet dark:text-scarlet-bright">{data.monteCarlo.worst.probability}%</p>
+                  <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.worst.outcome)}</p>
+                </div>
               </div>
 
-              <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-center">
-                <p className="font-sans text-[12px] text-ink/50 dark:text-frost/50 mb-2">
-                  {isId ? "Kasus Terbaik" : "Best Case"}
-                </p>
-                <p className="font-fraunces text-4xl text-emerald-600 dark:text-emerald-400 mb-1">
-                  {data.monteCarlo.best.probability}%
-                </p>
-                <p className="font-sans text-[12px] text-ink/40 dark:text-frost/40">
-                  {isId ? "Probabilitas" : "Probability"}
-                </p>
+              <div className="rounded-xl border border-steel/12 bg-steel/4 p-7 flex flex-col justify-between min-h-[280px]">
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus dasar" : "Base case"}</p>
+                <div>
+                  <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-steel dark:text-steel-bright">{data.monteCarlo.base.probability}%</p>
+                  <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.base.outcome)}</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-emerald-500/12 bg-emerald-500/4 p-7 flex flex-col justify-between min-h-[280px]">
+                <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">{isId ? "Kasus terbaik" : "Best case"}</p>
+                <div>
+                  <p className="font-fraunces text-[clamp(68px,7vw,92px)] leading-none text-emerald-600 dark:text-emerald-400">{data.monteCarlo.best.probability}%</p>
+                  <p className="mt-4 font-sans text-[16px] leading-relaxed text-ink/68 dark:text-frost/70">{formatCurrency(data.monteCarlo.best.outcome)}</p>
+                </div>
               </div>
             </div>
           </div>

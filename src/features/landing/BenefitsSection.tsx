@@ -10,7 +10,7 @@ export function BenefitsSection() {
   return (
     <section
       id="solutions"
-      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-transparent dark:bg-transparent transition-colors duration-520"
+      className="min-h-screen flex flex-col justify-center px-6 sm:px-13 py-24 bg-bone dark:bg-charcoal transition-colors duration-520"
     >
       <div className="max-w-content mx-auto">
         {/* Header row */}
@@ -28,10 +28,10 @@ export function BenefitsSection() {
             <br />
             {isId ? "Anda pakai Novaris." : "you use Novaris."}
           </h2>
-          <p
-            className="max-w-[30ch] font-sans font-light text-base
-                       text-ink/70 dark:text-frost/70
-                       leading-relaxed pl-8 border-l border-ink/9 dark:border-frost/8
+            <p
+             className="max-w-[30ch] font-sans font-light text-[20px]
+                        text-ink/72 dark:text-frost/76
+                        leading-relaxed pl-8 border-l border-ink/9 dark:border-frost/8
                        max-lg:border-l-0 max-lg:pl-0 max-lg:border-t max-lg:border-ink/9 max-lg:pt-4
                        transition-colors duration-520"
           >
@@ -44,15 +44,15 @@ export function BenefitsSection() {
         {/* 3-col flat benefit cards */}
         <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px
-                     bg-ink/9 dark:bg-frost/8
-                     border border-ink/9 dark:border-frost/8
+                     bg-ink/9 dark:bg-charcoal-light
+                     border border-ink/9 dark:border-frost/10
                      rounded-card overflow-hidden"
         >
           {benefits.map((b, i) => (
             <div
               key={i}
-              className={`ben-card group relative bg-bone-soft dark:bg-void-soft p-8 cursor-pointer overflow-hidden
-                          hover:bg-bone dark:hover:bg-void transition-colors duration-200 ease-spring`}
+              className={`ben-card group relative bg-bone-soft dark:bg-charcoal-soft p-8 cursor-pointer overflow-hidden
+                           hover:bg-bone dark:hover:bg-charcoal-light transition-colors duration-200 ease-spring`}
             >
               {/* Top accent bar */}
               <div
@@ -69,25 +69,25 @@ export function BenefitsSection() {
               {/* Number */}
               <div
                 className="font-fraunces font-semibold
-                           text-[42px] leading-none tracking-tight mb-4.5
-                           text-ink/16 dark:text-frost/15
+                           text-[48px] leading-none tracking-tight mb-5
+                           text-ink/16 dark:text-frost/20
                            group-hover:text-scarlet dark:group-hover:text-scarlet-bright
                            transition-colors duration-300 ease-spring"
               >
                 {b.n}
               </div>
 
-              <h3
-                className="font-fraunces font-semibold text-[17px]
-                           leading-snug tracking-tight
-                           text-ink dark:text-frost mb-2.5"
-              >
+               <h3
+                 className="font-fraunces font-semibold text-[28px]
+                            leading-snug tracking-tight
+                            text-ink dark:text-frost mb-2.5"
+               >
                 {b.headline}
               </h3>
-              <p
-                className="font-sans font-light text-xs
-                            text-ink/50 dark:text-frost/50 leading-relaxed"
-              >
+               <p
+                 className="font-sans font-light text-[17px]
+                            text-ink/66 dark:text-frost/76 leading-relaxed"
+                >
                 {b.body}
               </p>
             </div>

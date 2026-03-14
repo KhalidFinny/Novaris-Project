@@ -7,9 +7,9 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     // To ensure exact matches without complex config, using arbitrary values here
     // for the very specific signal backgrounds since they don't map to global text/bg vars
     const variants = {
-      ok: "bg-[#1A7A50]/10 border-[#1A7A50]/20 text-brand-ok",
-      warn: "bg-[#9A7200]/10 border-[#9A7200]/20 text-brand-warn",
-      danger: "bg-[#A82828]/10 border-[#A82828]/20 text-brand-danger",
+      ok: "bg-brand-ok/10 border-brand-ok/20 text-brand-ok",
+      warn: "bg-brand-warn/10 border-brand-warn/20 text-brand-warn",
+      danger: "bg-brand-danger/10 border-brand-danger/20 text-brand-danger",
     };
 
     const base =

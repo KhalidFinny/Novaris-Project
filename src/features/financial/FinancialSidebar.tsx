@@ -7,45 +7,9 @@ import type {
   FinancialFormState,
   FinancialSidebarProps,
 } from "./types";
+import { formatWithDots, parseDotNumber, preserveCaretAfterFormat } from "../../utils/formatters";
 
 type SectionId = "core" | "debt" | "growth" | "cascade";
-
-const formatWithDots = (value: number) =>
-  new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(
-    Math.round(value),
-  );
-
-const parseDotNumber = (value: string) => {
-  const normalized = value.replace(/[^\d]/g, "");
-  if (!normalized) return "";
-  return Number(normalized);
-};
-
-const preserveCaretAfterFormat = (
-  inputEl: HTMLInputElement,
-  digitsBeforeCursor: number,
-  formatted: string,
-) => {
-  if (!formatted) {
-    inputEl.setSelectionRange(0, 0);
-    return;
-  }
-
-  let digitSeen = 0;
-  let nextCursor = formatted.length;
-
-  for (let i = 0; i < formatted.length; i++) {
-    if (/\d/.test(formatted[i])) {
-      digitSeen += 1;
-    }
-    if (digitSeen >= Math.max(1, digitsBeforeCursor)) {
-      nextCursor = i + 1;
-      break;
-    }
-  }
-
-  inputEl.setSelectionRange(nextCursor, nextCursor);
-};
 
 function NumberField({
   label,
@@ -183,7 +147,7 @@ export function FinancialSidebar({
           fieldKey: "fixedCosts",
           suffix: c,
           info: isId
-            ? "Biaya rutin seperti sewa, gaji, dan software inti."
+            ? "Biaya rutin seperti sewa, gaji, and software inti."
             : "Recurring costs like rent, payroll, and core software.",
           placeholder: isId ? "20.000.000" : "20.000",
         },
@@ -384,7 +348,7 @@ export function FinancialSidebar({
                 className={`text-left rounded-xl border px-4 py-3 transition-all duration-300 ${
                   isActive
                     ? "border-scarlet/40 bg-scarlet/6 dark:bg-scarlet/8"
-                    : "border-ink/8 dark:border-frost/8 bg-white/35 dark:bg-white/[0.02] hover:border-ink/20 dark:hover:border-frost/20"
+                    : "border-ink/8 dark:border-frost/8 bg-white/35 dark:bg-white/2 hover:border-ink/20 dark:hover:border-frost/20"
                 }`}
               >
                 <p className="font-sans text-[13px] font-medium text-ink dark:text-frost">
@@ -398,7 +362,7 @@ export function FinancialSidebar({
           })}
         </div>
 
-        <section className="rounded-2xl border border-ink/8 dark:border-frost/8 bg-white/45 dark:bg-white/[0.02] p-6">
+        <section className="rounded-2xl border border-ink/8 dark:border-frost/8 bg-white/45 dark:bg-white/2 p-6">
           <div className="mb-5">
             <p className="font-sans text-[15px] font-medium text-scarlet dark:text-scarlet-bright">
               {selectedSection.label}
@@ -482,7 +446,7 @@ export function FinancialSidebar({
                           });
                         }}
                         placeholder={isId ? "12.000.000" : "12.000"}
-                        className="h-10 flex-1 rounded-[8px] px-3 font-sans text-[15px] bg-white/70 dark:bg-white/[0.04] border border-ink/12 dark:border-frost/12 outline-none"
+                        className="h-10 flex-1 rounded-[8px] px-3 font-sans text-[15px] bg-white/70 dark:bg-white/4 border border-ink/12 dark:border-frost/12 outline-none"
                       />
                       <button
                         type="button"

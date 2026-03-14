@@ -2,7 +2,7 @@ import React from "react";
 import { HeroSection } from "../features/landing/HeroSection";
 import { useLocale } from "../hooks/useLocale";
 import { useSeo } from "../hooks/useSeo";
-import logo3 from "../assets/logo/logo3.png";
+import logo1 from "../assets/logo/logo1.png";
 
 export default function LandingPage() {
   const { language } = useLocale();
@@ -17,14 +17,14 @@ export default function LandingPage() {
         ? "Novaris membantu owner bisnis memahami risiko finansial dan operasional agar keputusan lebih cepat dan tepat."
         : "Novaris helps business owners understand financial and operational risk to make faster, clearer decisions.",
     path: "/",
-    image: logo3,
+    image: logo1,
     structuredData: [
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "Novaris",
         url: "https://novaris.app",
-        logo: `https://novaris.app${logo3}`,
+        logo: `https://novaris.app${logo1}`,
       },
       {
         "@context": "https://schema.org",

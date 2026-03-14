@@ -1,0 +1,27 @@
+api/delay.ts(2,34): error TS2307: Cannot find module '../src/lib/engine/types' or its corresponding type declarations.
+api/delay.ts(3,35): error TS2307: Cannot find module '../src/lib/engine/weightModel' or its corresponding type declarations.
+api/financial.ts(2,38): error TS2307: Cannot find module '../src/lib/engine/types' or its corresponding type declarations.
+api/financial.ts(3,39): error TS2307: Cannot find module '../src/lib/engine/riskModel' or its corresponding type declarations.
+src/features/delay/BottlenecksScene.tsx(64,44): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/features/delay/BottlenecksScene.tsx(64,47): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/delay/BottlenecksScene.tsx(108,46): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/features/delay/BottlenecksScene.tsx(108,49): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/delay/PhaseChartScene.tsx(146,45): error TS7006: Parameter '_' implicitly has an 'any' type.
+src/features/delay/PhaseChartScene.tsx(146,48): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/delay/PhaseChartScene.tsx(161,45): error TS7006: Parameter '_' implicitly has an 'any' type.
+src/features/delay/PhaseChartScene.tsx(161,48): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/delay/constants.ts(1,33): error TS2307: Cannot find module '../../lib/engine/types' or its corresponding type declarations.
+src/features/delay/types.ts(2,46): error TS2307: Cannot find module '../../lib/engine/types' or its corresponding type declarations.
+src/features/financial/DecisionStoryScene.tsx(124,41): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/features/financial/DecisionStoryScene.tsx(124,44): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/financial/DecisionStoryScene.tsx(161,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/features/financial/DecisionStoryScene.tsx(161,51): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/financial/FinancialSidebar.tsx(4,37): error TS2307: Cannot find module '../../lib/engine/types' or its corresponding type declarations.
+src/features/financial/FinancialSidebar.tsx(26,20): error TS2538: Type 'symbol' cannot be used as an index type.
+src/features/financial/FinancialSidebar.tsx(86,26): error TS2538: Type 'symbol' cannot be used as an index type.
+src/features/financial/FinancialSidebar.tsx(86,54): error TS2538: Type 'symbol' cannot be used as an index type.
+src/features/financial/FinancialSidebar.tsx(302,61): error TS2538: Type 'symbol' cannot be used as an index type.
+src/features/financial/FinancialSidebar.tsx(377,20): error TS2322: Type 'string | number | symbol' is not assignable to type 'Key | null | undefined'.
+  Type 'symbol' is not assignable to type 'Key | null | undefined'.
+src/features/financial/constants.ts(1,37): error TS2307: Cannot find module '../../lib/engine/types' or its corresponding type declarations.
+src/features/financial/types.ts(2,54): error TS2307: Cannot find module '../../lib/engine/types' or its corresponding type declarations.

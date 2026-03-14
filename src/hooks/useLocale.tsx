@@ -17,6 +17,8 @@ interface LocaleContextProps {
   convertAmount: (amount: number, from: Currency, to: Currency) => number;
   exchangeRates: ExchangeRates;
   fxLastUpdatedAt: string | null;
+  refreshExchangeRates: () => Promise<void>;
+  isFxLoading: boolean;
 }
 
 const FX_RATES_STORAGE_KEY = "novaris-fx-rates";
@@ -411,6 +413,39 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [fxLastUpdatedAt, setFxLastUpdatedAt] = useState<string | null>(() => {
     return localStorage.getItem(FX_RATE_UPDATED_AT_STORAGE_KEY);
   });
+  const [isFxLoading, setIsFxLoading] = useState(false);
+
+  const refreshExchangeRates = async () => {
+    setIsFxLoading(true);
+    try {
+      const res = await fetch("https://open.er-api.com/v6/latest/USD", {
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+
+      const payload = await res.json();
+      const rates = payload?.rates;
+      if (!rates) return;
+
+      const newRates: ExchangeRates = { USD: 1 };
+
+      (Object.keys(DEFAULT_RATES) as Currency[]).forEach((curr) => {
+        if (curr === "USD") return;
+        const rate = rates[curr];
+        newRates[curr] = rate && Number.isFinite(rate) && rate > 0 ? rate : DEFAULT_RATES[curr];
+      });
+
+      const updatedAt = new Date().toISOString();
+      setExchangeRates(newRates);
+      setFxLastUpdatedAt(updatedAt);
+      localStorage.setItem(FX_RATES_STORAGE_KEY, JSON.stringify(newRates));
+      localStorage.setItem(FX_RATE_UPDATED_AT_STORAGE_KEY, updatedAt);
+    } catch {
+      // Keep cached rates silently
+    } finally {
+      setIsFxLoading(false);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem("novaris-lang", language);
@@ -425,37 +460,8 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     let cancelled = false;
 
     const fetchRates = async () => {
-      try {
-        // Fetch USD base rates
-        const res = await fetch("https://open.er-api.com/v6/latest/USD");
-        if (!res.ok) return;
-        
-        const payload = await res.json();
-        const rates = payload?.rates;
-        
-        if (!rates || cancelled) return;
-
-        // Map API rates to our currencies
-        const newRates: ExchangeRates = { USD: 1 };
-        
-        (Object.keys(DEFAULT_RATES) as Currency[]).forEach((curr) => {
-          if (curr === "USD") return;
-          const rate = rates[curr];
-          if (rate && Number.isFinite(rate) && rate > 0) {
-            newRates[curr] = rate;
-          } else {
-            newRates[curr] = DEFAULT_RATES[curr];
-          }
-        });
-
-        const updatedAt = new Date().toISOString();
-        setExchangeRates(newRates);
-        setFxLastUpdatedAt(updatedAt);
-        localStorage.setItem(FX_RATES_STORAGE_KEY, JSON.stringify(newRates));
-        localStorage.setItem(FX_RATE_UPDATED_AT_STORAGE_KEY, updatedAt);
-      } catch {
-        // Keep cached rates silently
-      }
+      await refreshExchangeRates();
+      if (cancelled) return;
     };
 
     fetchRates();
@@ -523,6 +529,8 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
         convertAmount,
         exchangeRates,
         fxLastUpdatedAt,
+        refreshExchangeRates,
+        isFxLoading,
       }}
     >
       {children}

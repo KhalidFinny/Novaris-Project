@@ -16,14 +16,20 @@ import type {
 } from "../../types/decisionCenter";
 import { selectTemplate } from "./narrativeTemplates";
 
+type DecisionLanguage = "en" | "id";
+
+/** Converts numeric or empty string values to numbers */
 const toNumber = (value: number | "") => (value === "" ? 0 : Number(value));
 
+/** Clamps a value between min and max */
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+/** Checks if any project delay data is present */
 const hasDelayLayer = (inputs: AllInputs) =>
   Object.values(inputs.delayRisk).some((value) => value !== "");
 
+/** Deep clones the inputs object */
 const cloneInputs = (inputs: AllInputs): AllInputs => ({
   ...inputs,
   essentials: { ...inputs.essentials },
@@ -31,6 +37,7 @@ const cloneInputs = (inputs: AllInputs): AllInputs => ({
   scenario: { ...inputs.scenario },
 });
 
+/** Calculates risk score based on cash runway days */
 function getRunwayRiskScore(runwayDays: number) {
   if (runwayDays <= 15) return 100;
   if (runwayDays <= 30) return 92;
@@ -40,6 +47,7 @@ function getRunwayRiskScore(runwayDays: number) {
   return 14;
 }
 
+/** Calculates risk score based on revenue variance percentage */
 function getRevenueRiskScore(variancePercent: number) {
   if (variancePercent >= 0) {
     return variancePercent >= 20 ? 6 : variancePercent >= 10 ? 10 : 14;
@@ -48,6 +56,7 @@ function getRevenueRiskScore(variancePercent: number) {
   return clamp(Math.abs(variancePercent) * 2.2, 18, 100);
 }
 
+/** Calculates risk score based on lead client revenue dependency */
 function getClientDependencyRiskScore(dependencyPercent: number) {
   if (dependencyPercent <= 15) return 12;
   if (dependencyPercent <= 30) return 28;
@@ -56,6 +65,7 @@ function getClientDependencyRiskScore(dependencyPercent: number) {
   return 88;
 }
 
+/** Calculates the weighted composite risk score for the dashboard */
 function getCompositeRiskScore(inputs: AllInputs, kpi: DecisionCenterData["kpi"]) {
   const runwayRisk = getRunwayRiskScore(kpi.cashRunway?.baseRunway || 0);
   const revenueRisk = getRevenueRiskScore(kpi.monthlyRevenue?.variancePercent || 0);
@@ -82,6 +92,7 @@ function getCompositeRiskScore(inputs: AllInputs, kpi: DecisionCenterData["kpi"]
   };
 }
 
+/** Maps a numeric score to a named risk level */
 function getRiskLevelFromScore(score: number): DecisionNarrative["riskLevel"] {
   if (score >= 78) return "critical";
   if (score >= 58) return "high";
@@ -89,6 +100,7 @@ function getRiskLevelFromScore(score: number): DecisionNarrative["riskLevel"] {
   return "low";
 }
 
+/** Applies interactive what-if scenario modifications to inputs */
 function applyScenario(inputs: AllInputs): AllInputs {
   const scenario = inputs.activeScenario;
   if (!scenario) return inputs;
@@ -122,6 +134,7 @@ function applyScenario(inputs: AllInputs): AllInputs {
   return next;
 }
 
+/** Calculates cash runway based on bank balance and monthly burn */
 function calculateCashRunway(inputs: AllInputs): CashRunwayCalculation | null {
   const cash = toNumber(inputs.essentials.cashInBank);
   const monthlyBills = toNumber(inputs.essentials.monthlyBills);
@@ -140,6 +153,7 @@ function calculateCashRunway(inputs: AllInputs): CashRunwayCalculation | null {
   return { cashInBank: cash, monthlyBills, dailyBurnRate: dailyBurn, baseRunway, adjustedRunway, status };
 }
 
+/** Calculates revenue gap and variance against target/break-even */
 function calculateMonthlyRevenue(inputs: AllInputs): MonthlyRevenueCalculation | null {
   const revenue = toNumber(inputs.essentials.monthlyRevenue);
   const bills = toNumber(inputs.essentials.monthlyBills);
@@ -159,6 +173,7 @@ function calculateMonthlyRevenue(inputs: AllInputs): MonthlyRevenueCalculation |
   };
 }
 
+/** Calculates current daily burn rate and trend relative to income */
 function calculateDailyBurn(inputs: AllInputs): DailyBurnCalculation | null {
   const bills = toNumber(inputs.essentials.monthlyBills);
   const revenue = toNumber(inputs.essentials.monthlyRevenue);
@@ -178,6 +193,7 @@ function calculateCompliance(): ComplianceCalculation | null {
   return null;
 }
 
+/** Calculates project delay probability using objective project factors */
 function calculateDelayProbability(inputs: AllInputs) {
   if (!hasDelayLayer(inputs)) return 0;
 
@@ -195,7 +211,8 @@ function calculateDelayProbability(inputs: AllInputs) {
   return Math.min(95, score);
 }
 
-function generateNarrative(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): DecisionNarrative | null {
+/** Selects and populates a strategic narrative template based on simulation results */
+function generateNarrative(inputs: AllInputs, kpi: DecisionCenterData["kpi"], language: DecisionLanguage): DecisionNarrative | null {
   if (!kpi.cashRunway) return null;
 
   const delayProbability = calculateDelayProbability(inputs);
@@ -219,7 +236,7 @@ function generateNarrative(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): D
     runwayDays: kpi.cashRunway.baseRunway,
     revenueGapPercent: variancePercent,
     clientDependencyPercent: biggestClientPercent,
-  });
+  }, language);
 
   if (!template) return null;
 
@@ -238,67 +255,70 @@ function generateNarrative(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): D
     95,
   );
 
+  const vars: Record<string, string> = {
+    runwayDays: String(kpi.cashRunway?.baseRunway || 0),
+    acceleratedDays: String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 10)),
+    dailyBurn: dailyBurn.toLocaleString(),
+    blockedPayment: paymentAtRisk.toLocaleString(),
+    blockedAmount: paymentAtRisk.toLocaleString(),
+    projectName: language === "id" ? "proyek aktif Anda" : "your active project",
+    consumedDays: String(consumedDays),
+    shockCount: kpi.cashRunway && kpi.cashRunway.baseRunway >= 60 ? "2" : "1",
+    shockAbsorption: kpi.cashRunway && kpi.cashRunway.baseRunway >= 90 ? "3" : kpi.cashRunway && kpi.cashRunway.baseRunway >= 60 ? "2" : "1",
+    shockCapacity: kpi.cashRunway && kpi.cashRunway.baseRunway >= 120 ? "4" : kpi.cashRunway && kpi.cashRunway.baseRunway >= 90 ? "3" : "2",
+    currentRunway: String(kpi.cashRunway?.baseRunway || 0),
+    projectedRunway: String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 8)),
+    burnTrend: String(Math.round(kpi.dailyBurn?.trendPercent || 0)),
+    effectiveDays: String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 6)),
+    delayCount: hasDelayLayer(inputs) ? "1" : "0",
+    totalExposure: paymentAtRisk.toLocaleString(),
+    teamSize: String(toNumber(inputs.delayRisk.teamSize) || 1),
+    varianceDays: String(varianceDays),
+    gapAmount: Math.abs(varianceAmount).toLocaleString(),
+    gapPercent: String(Math.abs(variancePercent).toFixed(1)),
+    topClient: language === "id" ? "klien terbesar Anda" : "your biggest client",
+    concentrationPercent: String(biggestClientPercent || 0),
+    impactAmount: Math.round((revenue * biggestClientPercent) / 100).toLocaleString(),
+    requiredGrowth: String(Math.max(0, Math.round(((targetRevenue - revenue) / Math.max(revenue, 1)) * 100))),
+    arDependency: String(clamp(Math.round((paymentAtRisk / Math.max(toNumber(inputs.essentials.cashInBank), 1)) * 100), 0, 100)),
+    adjustedRunway: String(kpi.cashRunway?.adjustedRunway || 0),
+    delayDays: String(consumedDays),
+    opportunityCost: Math.round(paymentAtRisk * 0.12).toLocaleString(),
+    affectedProjects: String(hasDelayLayer(inputs) ? 2 : 1),
+    stalledDays: String(consumedDays),
+    burnedAmount: Math.round(consumedDays * dailyBurn).toLocaleString(),
+    riskDays: String(Math.max(0, varianceDays - toNumber(inputs.delayRisk.bufferDays))),
+    originalDays: String(toNumber(inputs.delayRisk.projectTargetDays) || 30),
+    currentDays: String(((toNumber(inputs.delayRisk.projectTargetDays) || 30) + varianceDays)),
+    scopePercent: String(Math.round((varianceDays / Math.max(toNumber(inputs.delayRisk.projectTargetDays) || 30, 1)) * 100)),
+    bufferDays: String(toNumber(inputs.delayRisk.bufferDays) || 0),
+    typicalVariance: "5",
+    clientName: language === "id" ? "klien utama Anda" : "your lead client",
+    riskScore: String(composite.components.clientRisk),
+    consecutiveMonths: String(variancePercent < 0 ? 3 : 1),
+    cumulativeGap: Math.round(Math.abs(varianceAmount) * 3).toLocaleString(),
+    trendDirection: variancePercent >= 0 ? (language === "id" ? "membaik" : "improving") : (language === "id" ? "melemah" : "slipping"),
+    trendRate: String(Math.max(4, Math.round(Math.abs(variancePercent) / 2))),
+    surplusAmount: Math.max(0, varianceAmount).toLocaleString(),
+    capacity: String(hasDelayLayer(inputs) ? 86 : 74),
+    variance: String(Math.abs(variancePercent).toFixed(1)),
+    delayCost: Math.round(paymentAtRisk * 0.08).toLocaleString(),
+    totalBleed: Math.round(Math.abs(varianceAmount) + paymentAtRisk * 0.08).toLocaleString(),
+    baseBurn: dailyBurn.toLocaleString(),
+    acceleration: String(Math.round(kpi.dailyBurn?.trendPercent || 0)),
+    delayCosts: Math.round(paymentAtRisk * 0.08).toLocaleString(),
+    effectiveBurn: Math.round(dailyBurn + paymentAtRisk * 0.08).toLocaleString(),
+    riskCount: String(activeRiskCount || 1),
+    combinedProbability: String(probabilityBase),
+    atRiskProjects: String(hasDelayLayer(inputs) ? 1 : 0),
+    pipelineRisk: String(clamp(biggestClientPercent, 0, 100)),
+    surplusCash: Math.max(0, toNumber(inputs.essentials.cashInBank) - toNumber(inputs.essentials.monthlyBills)).toLocaleString(),
+    surplusRevenue: Math.max(0, varianceAmount).toLocaleString(),
+    stableMonths: (kpi.cashRunway?.baseRunway || 0) >= 90 ? "6" : "3",
+  };
+
   const replaceVars = (text: string) =>
-    text
-      .replace(/\{\{runwayDays\}\}/g, String(kpi.cashRunway?.baseRunway || 0))
-      .replace(/\{\{acceleratedDays\}\}/g, String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 10)))
-      .replace(/\{\{dailyBurn\}\}/g, dailyBurn.toLocaleString())
-      .replace(/\{\{blockedPayment\}\}/g, paymentAtRisk.toLocaleString())
-      .replace(/\{\{blockedAmount\}\}/g, paymentAtRisk.toLocaleString())
-      .replace(/\{\{projectName\}\}/g, "your active project")
-      .replace(/\{\{consumedDays\}\}/g, String(consumedDays))
-      .replace(/\{\{shockCount\}\}/g, kpi.cashRunway && kpi.cashRunway.baseRunway >= 60 ? "2" : "1")
-      .replace(/\{\{shockAbsorption\}\}/g, kpi.cashRunway && kpi.cashRunway.baseRunway >= 90 ? "3" : kpi.cashRunway && kpi.cashRunway.baseRunway >= 60 ? "2" : "1")
-      .replace(/\{\{shockCapacity\}\}/g, kpi.cashRunway && kpi.cashRunway.baseRunway >= 120 ? "4" : kpi.cashRunway && kpi.cashRunway.baseRunway >= 90 ? "3" : "2")
-      .replace(/\{\{currentRunway\}\}/g, String(kpi.cashRunway?.baseRunway || 0))
-      .replace(/\{\{projectedRunway\}\}/g, String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 8)))
-      .replace(/\{\{burnTrend\}\}/g, String(Math.round(kpi.dailyBurn?.trendPercent || 0)))
-      .replace(/\{\{effectiveDays\}\}/g, String(Math.max(0, (kpi.cashRunway?.baseRunway || 0) - 6)))
-      .replace(/\{\{delayCount\}\}/g, hasDelayLayer(inputs) ? "1" : "0")
-      .replace(/\{\{totalExposure\}\}/g, paymentAtRisk.toLocaleString())
-      .replace(/\{\{teamSize\}\}/g, String(toNumber(inputs.delayRisk.teamSize) || 1))
-      .replace(/\{\{varianceDays\}\}/g, String(varianceDays))
-      .replace(/\{\{gapAmount\}\}/g, Math.abs(varianceAmount).toLocaleString())
-      .replace(/\{\{gapPercent\}\}/g, String(Math.abs(variancePercent).toFixed(1)))
-      .replace(/\{\{topClient\}\}/g, "your biggest client")
-      .replace(/\{\{concentrationPercent\}\}/g, String(biggestClientPercent || 0))
-      .replace(/\{\{impactAmount\}\}/g, Math.round((revenue * biggestClientPercent) / 100).toLocaleString())
-      .replace(/\{\{requiredGrowth\}\}/g, String(Math.max(0, Math.round(((targetRevenue - revenue) / Math.max(revenue, 1)) * 100))))
-      .replace(/\{\{arDependency\}\}/g, String(clamp(Math.round((paymentAtRisk / Math.max(toNumber(inputs.essentials.cashInBank), 1)) * 100), 0, 100)))
-      .replace(/\{\{adjustedRunway\}\}/g, String(kpi.cashRunway?.adjustedRunway || 0))
-      .replace(/\{\{delayDays\}\}/g, String(consumedDays))
-      .replace(/\{\{opportunityCost\}\}/g, Math.round(paymentAtRisk * 0.12).toLocaleString())
-      .replace(/\{\{affectedProjects\}\}/g, String(hasDelayLayer(inputs) ? 2 : 1))
-      .replace(/\{\{stalledDays\}\}/g, String(consumedDays))
-      .replace(/\{\{burnedAmount\}\}/g, Math.round(consumedDays * dailyBurn).toLocaleString())
-      .replace(/\{\{riskDays\}\}/g, String(Math.max(0, varianceDays - toNumber(inputs.delayRisk.bufferDays))))
-      .replace(/\{\{originalDays\}\}/g, String(toNumber(inputs.delayRisk.projectTargetDays) || 30))
-      .replace(/\{\{currentDays\}\}/g, String((toNumber(inputs.delayRisk.projectTargetDays) || 30) + varianceDays))
-      .replace(/\{\{scopePercent\}\}/g, String(Math.round((varianceDays / Math.max(toNumber(inputs.delayRisk.projectTargetDays) || 30, 1)) * 100)))
-      .replace(/\{\{bufferDays\}\}/g, String(toNumber(inputs.delayRisk.bufferDays) || 0))
-      .replace(/\{\{typicalVariance\}\}/g, "5")
-      .replace(/\{\{clientName\}\}/g, "your lead client")
-      .replace(/\{\{riskScore\}\}/g, String(composite.components.clientRisk))
-      .replace(/\{\{consecutiveMonths\}\}/g, String(variancePercent < 0 ? 3 : 1))
-      .replace(/\{\{cumulativeGap\}\}/g, Math.round(Math.abs(varianceAmount) * 3).toLocaleString())
-      .replace(/\{\{trendDirection\}\}/g, variancePercent >= 0 ? "improving" : "slipping")
-      .replace(/\{\{trendRate\}\}/g, String(Math.max(4, Math.round(Math.abs(variancePercent) / 2))))
-      .replace(/\{\{surplusAmount\}\}/g, Math.max(0, varianceAmount).toLocaleString())
-      .replace(/\{\{capacity\}\}/g, String(hasDelayLayer(inputs) ? 86 : 74))
-      .replace(/\{\{variance\}\}/g, String(Math.abs(variancePercent).toFixed(1)))
-      .replace(/\{\{delayCost\}\}/g, Math.round(paymentAtRisk * 0.08).toLocaleString())
-      .replace(/\{\{totalBleed\}\}/g, Math.round(Math.abs(varianceAmount) + paymentAtRisk * 0.08).toLocaleString())
-      .replace(/\{\{baseBurn\}\}/g, dailyBurn.toLocaleString())
-      .replace(/\{\{acceleration\}\}/g, String(Math.round(kpi.dailyBurn?.trendPercent || 0)))
-      .replace(/\{\{delayCosts\}\}/g, Math.round(paymentAtRisk * 0.08).toLocaleString())
-      .replace(/\{\{effectiveBurn\}\}/g, Math.round(dailyBurn + paymentAtRisk * 0.08).toLocaleString())
-      .replace(/\{\{riskCount\}\}/g, String(activeRiskCount || 1))
-      .replace(/\{\{combinedProbability\}\}/g, String(probabilityBase))
-      .replace(/\{\{atRiskProjects\}\}/g, String(hasDelayLayer(inputs) ? 1 : 0))
-      .replace(/\{\{pipelineRisk\}\}/g, String(clamp(biggestClientPercent, 0, 100)))
-      .replace(/\{\{surplusCash\}\}/g, Math.max(0, toNumber(inputs.essentials.cashInBank) - toNumber(inputs.essentials.monthlyBills)).toLocaleString())
-      .replace(/\{\{surplusRevenue\}\}/g, Math.max(0, varianceAmount).toLocaleString())
-      .replace(/\{\{stableMonths\}\}/g, (kpi.cashRunway?.baseRunway || 0) >= 90 ? "6" : "3");
+    text.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] || `{{${key}}}`);
 
   return {
     templateId: template.id,
@@ -312,7 +332,8 @@ function generateNarrative(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): D
   };
 }
 
-function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): RiskBridgePair[] {
+/** Generates risk trigger bridges that link operational delays to financial impact */
+function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"], language: DecisionLanguage): RiskBridgePair[] {
   const pairs: RiskBridgePair[] = [];
   const delayProbability = calculateDelayProbability(inputs);
 
@@ -320,10 +341,10 @@ function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): 
     pairs.push({
       id: "cash-to-delay",
       triggerType: "finance",
-      triggerCondition: "Thin cash buffer",
-      triggerValue: `${kpi.cashRunway.baseRunway} days`,
-      effect: "Delivery pressure",
-      effectDescription: "Low cash leaves less room to absorb project slippage or add emergency help.",
+        triggerCondition: language === "id" ? "Buffer kas tipis" : "Thin cash buffer",
+        triggerValue: `${kpi.cashRunway.baseRunway} days`,
+        effect: language === "id" ? "Tekanan pengiriman" : "Delivery pressure",
+        effectDescription: language === "id" ? "Kas yang tipis menyisakan lebih sedikit ruang untuk menyerap keterlambatan proyek atau menambah bantuan darurat." : "Low cash leaves less room to absorb project slippage or add emergency help.",
       isActive: true,
     });
   }
@@ -332,10 +353,10 @@ function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): 
     pairs.push({
       id: "delay-to-cash",
       triggerType: "operations",
-      triggerCondition: "Project timeline risk",
+      triggerCondition: language === "id" ? "Risiko timeline proyek" : "Project timeline risk",
       triggerValue: `${delayProbability}%`,
-      effect: "Cash collection risk",
-      effectDescription: `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} may arrive later than planned.`,
+      effect: language === "id" ? "Risiko penagihan kas" : "Cash collection risk",
+      effectDescription: language === "id" ? `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} bisa masuk lebih lambat dari rencana.` : `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} may arrive later than planned.`,
       isActive: true,
     });
   }
@@ -344,10 +365,10 @@ function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): 
     pairs.push({
       id: "client-to-cash",
       triggerType: "finance",
-      triggerCondition: "High client dependency",
-      triggerValue: `${toNumber(inputs.essentials.biggestClientPercent)}%`,
-      effect: "Negotiation weakness",
-      effectDescription: "One client delay can pressure both cash and delivery decisions.",
+        triggerCondition: language === "id" ? "Ketergantungan klien tinggi" : "High client dependency",
+        triggerValue: `${toNumber(inputs.essentials.biggestClientPercent)}%`,
+        effect: language === "id" ? "Posisi negosiasi melemah" : "Negotiation weakness",
+        effectDescription: language === "id" ? "Satu keterlambatan dari klien bisa menekan keputusan kas dan delivery sekaligus." : "One client delay can pressure both cash and delivery decisions.",
       isActive: true,
     });
   }
@@ -355,14 +376,15 @@ function generateRiskBridge(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): 
   return pairs;
 }
 
-function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): DominoChain | null {
+/** Constructs a domino chain visualization of cascading business risks */
+function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"], language: DecisionLanguage): DominoChain | null {
   if (!kpi.cashRunway) return null;
 
   const nodes: DominoNode[] = [
     {
       step: 1,
-      label: kpi.cashRunway.status === "critical" ? "Cash pressure is immediate" : "Cash room is narrowing",
-      impact: `${kpi.cashRunway.baseRunway} days of runway at current bills`,
+      label: kpi.cashRunway.status === "critical" ? (language === "id" ? "Tekanan kas sudah langsung terasa" : "Cash pressure is immediate") : (language === "id" ? "Ruang kas mulai menyempit" : "Cash room is narrowing"),
+      impact: language === "id" ? `${kpi.cashRunway.baseRunway} hari runway pada tingkat biaya saat ini` : `${kpi.cashRunway.baseRunway} days of runway at current bills`,
       color: "scarlet",
     },
   ];
@@ -370,21 +392,21 @@ function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"]):
   if (hasDelayLayer(inputs)) {
     nodes.push({
       step: 2,
-      label: "Project timing starts to matter",
-      impact: `${toNumber(inputs.delayRisk.bufferDays)} buffer days left before delivery risk shows up`,
+        label: language === "id" ? "Timing proyek mulai krusial" : "Project timing starts to matter",
+        impact: language === "id" ? `${toNumber(inputs.delayRisk.bufferDays)} hari buffer tersisa sebelum risiko delivery muncul` : `${toNumber(inputs.delayRisk.bufferDays)} buffer days left before delivery risk shows up`,
       color: "amber",
     });
     nodes.push({
       step: 3,
-      label: "Payment timing gets pulled with delivery",
-      impact: `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} becomes sensitive to schedule slip`,
+        label: language === "id" ? "Timing pembayaran ikut tertarik oleh delivery" : "Payment timing gets pulled with delivery",
+        impact: language === "id" ? `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} menjadi sensitif terhadap slip jadwal` : `${toNumber(inputs.delayRisk.paymentAtRisk).toLocaleString()} becomes sensitive to schedule slip`,
       color: "steel",
     });
   } else {
     nodes.push({
       step: 2,
-      label: "Any late customer payment hurts faster",
-      impact: "Less buffer means less time to correct course",
+        label: language === "id" ? "Setiap pembayaran klien yang telat lebih cepat terasa" : "Any late customer payment hurts faster",
+        impact: language === "id" ? "Buffer yang lebih kecil berarti waktu koreksi juga lebih sempit" : "Less buffer means less time to correct course",
       color: "amber",
     });
   }
@@ -392,16 +414,16 @@ function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"]):
   if (toNumber(inputs.essentials.biggestClientPercent) >= 40) {
     nodes.push({
       step: nodes.length + 1,
-      label: "Dependency amplifies the damage",
-      impact: `${toNumber(inputs.essentials.biggestClientPercent)}% of income depends on one relationship`,
+        label: language === "id" ? "Ketergantungan memperbesar dampak" : "Dependency amplifies the damage",
+        impact: language === "id" ? `${toNumber(inputs.essentials.biggestClientPercent)}% pemasukan bergantung pada satu relasi` : `${toNumber(inputs.essentials.biggestClientPercent)}% of income depends on one relationship`,
       color: "steel",
     });
   }
 
   nodes.push({
     step: nodes.length + 1,
-    label: kpi.cashRunway.status === "critical" ? "You are forced into reactive decisions" : "You lose strategic flexibility",
-    impact: kpi.cashRunway.status === "critical" ? "Cutting, delaying, or borrowing becomes urgent" : "Good choices become harder as time shrinks",
+      label: kpi.cashRunway.status === "critical" ? (language === "id" ? "Anda dipaksa masuk ke keputusan reaktif" : "You are forced into reactive decisions") : (language === "id" ? "Anda kehilangan fleksibilitas strategis" : "You lose strategic flexibility"),
+      impact: kpi.cashRunway.status === "critical" ? (language === "id" ? "Memotong biaya, menunda, atau meminjam jadi mendesak" : "Cutting, delaying, or borrowing becomes urgent") : (language === "id" ? "Pilihan yang baik semakin sulit saat waktu menipis" : "Good choices become harder as time shrinks"),
     color: "neutral",
   });
 
@@ -411,6 +433,7 @@ function generateDominoChain(inputs: AllInputs, kpi: DecisionCenterData["kpi"]):
   };
 }
 
+/** Prepares datasets for the dashboard charts (revenue gap, MC distribution, LFI) */
 function buildCharts(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): ChartData {
   const bills = toNumber(inputs.essentials.monthlyBills);
   const revenue = toNumber(inputs.essentials.monthlyRevenue);
@@ -439,7 +462,8 @@ function buildCharts(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): ChartDa
   };
 }
 
-function buildRiskScores(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): RiskScore[] {
+/** Prepares individual risk category scores and trends for the visual radar */
+function buildRiskScores(inputs: AllInputs, kpi: DecisionCenterData["kpi"], language: DecisionLanguage): RiskScore[] {
   const delayProbability = hasDelayLayer(inputs) ? calculateDelayProbability(inputs) : 0;
   const dependency = toNumber(inputs.essentials.biggestClientPercent);
   const variancePercent = kpi.monthlyRevenue?.variancePercent || 0;
@@ -449,31 +473,31 @@ function buildRiskScores(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): Ris
 
   return [
     {
-      category: "Weighted overall risk",
+      category: language === "id" ? "Risiko keseluruhan berbobot" : "Weighted overall risk",
       score: composite.score,
       trend: composite.score >= 55 ? "worsening" : composite.score <= 30 ? "improving" : "stable",
       exposureWidth: 0,
     },
     {
-      category: "Cash resilience",
+      category: language === "id" ? "Ketahanan kas" : "Cash resilience",
       score: composite.components.runwayRisk,
       trend: (kpi.cashRunway?.baseRunway || 0) >= 60 ? "improving" : (kpi.cashRunway?.baseRunway || 0) < 45 ? "worsening" : "stable",
       exposureWidth: 0,
     },
     {
-      category: "Delay exposure",
+      category: language === "id" ? "Eksposur delay" : "Delay exposure",
       score: delayProbability,
       trend: delayProbability >= 45 ? "worsening" : delayProbability === 0 ? "improving" : "stable",
       exposureWidth: 0,
     },
     {
-      category: "Client dependency",
+      category: language === "id" ? "Ketergantungan klien" : "Client dependency",
       score: dependencyRisk,
       trend: dependency >= 40 ? "worsening" : "stable",
       exposureWidth: 0,
     },
     {
-      category: "Income vs bills",
+      category: language === "id" ? "Pendapatan vs biaya" : "Income vs bills",
       score: revenueRisk,
       trend: variancePercent < 0 ? "worsening" : "improving",
       exposureWidth: 0,
@@ -481,7 +505,8 @@ function buildRiskScores(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): Ris
   ];
 }
 
-function buildScenarioOutput(inputs: AllInputs, kpi: DecisionCenterData["kpi"]): ScenarioOutput | null {
+/** Calculates the projected outcome of a specific interactive what-if scenario */
+function buildScenarioOutput(inputs: AllInputs, kpi: DecisionCenterData["kpi"], language: DecisionLanguage): ScenarioOutput | null {
   if (!kpi.cashRunway) return null;
 
   const cashInjection = toNumber(inputs.scenario.cashInjection);
@@ -498,11 +523,12 @@ function buildScenarioOutput(inputs: AllInputs, kpi: DecisionCenterData["kpi"]):
     gapDelta: Math.max(0, overheadReduction),
     shieldLevel: projectedRunway >= 90 ? 3 : projectedRunway >= 60 ? 2 : projectedRunway >= 30 ? 1 : 0,
     narrativeSummary: projectedRunway > kpi.cashRunway.baseRunway
-      ? "This scenario buys you more time to make decisions."
-      : "This scenario does not materially improve your current position.",
+      ? language === "id" ? "Skenario ini memberi Anda lebih banyak waktu untuk mengambil keputusan." : "This scenario buys you more time to make decisions."
+      : language === "id" ? "Skenario ini tidak memperbaiki posisi Anda secara material." : "This scenario does not materially improve your current position.",
   };
 }
 
+/** Calculates the resilience shield levels based on cash and operational health */
 function calculateShield(kpi: DecisionCenterData["kpi"], inputs: AllInputs): ResilienceShield {
   const lfi = Math.min(100, kpi.cashRunway?.status === "critical" ? 80 : kpi.cashRunway?.status === "warning" ? 60 : 28);
   const runway = kpi.cashRunway?.baseRunway || 0;
@@ -523,7 +549,8 @@ function calculateShield(kpi: DecisionCenterData["kpi"], inputs: AllInputs): Res
   };
 }
 
-export function calculateDecisionCenter(rawInputs: AllInputs): DecisionCenterData {
+/** Core engine entry point that calculates all Decision Center intelligence layers */
+export function calculateDecisionCenter(rawInputs: AllInputs, language: DecisionLanguage = "en"): DecisionCenterData {
   const inputs = applyScenario(rawInputs);
 
   const kpi = {
@@ -533,12 +560,12 @@ export function calculateDecisionCenter(rawInputs: AllInputs): DecisionCenterDat
     compliance: calculateCompliance(),
   };
 
-  const narrative = generateNarrative(inputs, kpi);
-  const riskBridge = generateRiskBridge(inputs, kpi);
-  const dominoChain = generateDominoChain(inputs, kpi);
+  const narrative = generateNarrative(inputs, kpi, language);
+  const riskBridge = generateRiskBridge(inputs, kpi, language);
+  const dominoChain = generateDominoChain(inputs, kpi, language);
   const charts = buildCharts(inputs, kpi);
-  const riskScores = buildRiskScores(inputs, kpi);
-  const scenarioOutput = buildScenarioOutput(inputs, kpi);
+  const riskScores = buildRiskScores(inputs, kpi, language);
+  const scenarioOutput = buildScenarioOutput(inputs, kpi, language);
   const shield = calculateShield(kpi, inputs);
 
   return {

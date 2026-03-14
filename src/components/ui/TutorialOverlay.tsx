@@ -96,10 +96,10 @@ export function TutorialOverlay({
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="fixed inset-0 z-[100] pointer-events-none flex flex-col items-center justify-end pb-12 bg-ink/30 dark:bg-void/80 backdrop-blur-md transition-opacity duration-500">
+    <div className="fixed inset-0 z-[100] pointer-events-none flex flex-col items-center justify-end pb-12 bg-ink/20 dark:bg-void/40 backdrop-blur-md transition-opacity duration-500">
       {/* Tutorial card */}
       <div
-        className="pointer-events-auto w-[420px] bg-white dark:bg-white/[0.04] border border-ink/10 dark:border-white/[0.08] rounded-3xl shadow-2xl backdrop-blur-xl mb-4"
+        className="pointer-events-auto w-[420px] bg-white dark:bg-white/4 border border-ink/10 dark:border-white/8 rounded-3xl shadow-2xl backdrop-blur-xl mb-4"
         style={{ animation: "slideUp 0.4s cubic-bezier(0.22,1,0.36,1) both" }}
       >
         {/* Progress bar */}
@@ -146,8 +146,8 @@ export function TutorialOverlay({
                     height: "0.375rem",
                     background:
                       i <= currentStep
-                        ? "var(--accent-bright)"
-                        : "var(--border)",
+                        ? "var(--color-brand-accent)"
+                        : "var(--color-ink)",
                     opacity: i < currentStep ? 0.4 : 1,
                   }}
                 />

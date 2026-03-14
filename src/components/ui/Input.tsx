@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { Info } from "lucide-react";
 import type { InputProps } from "./types";
 
@@ -17,13 +17,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const [showInfo, setShowInfo] = useState(false);
+    const generatedId = useId();
+    const inputId = props.id ?? generatedId;
     if (type === "range") {
       return (
         <div className={`mb-5 ${className}`}>
           {label && (
             <div className="flex justify-between items-end mb-2 relative">
               <div className="flex items-center gap-1.5">
-                <span
+                <label
+                  htmlFor={inputId}
                   className={`font-sans text-[13px] font-medium ${
                     invalid
                       ? "text-scarlet dark:text-scarlet-bright"
@@ -31,7 +34,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   }`}
                 >
                   {label}
-                </span>
+                </label>
                 {info && (
                   <button
                     type="button"
@@ -44,7 +47,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   </button>
                 )}
                 {showInfo && info && (
-                  <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-bone text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
+                  <div className="absolute left-0 bottom-full mb-1 w-56 rounded border border-ink/10 bg-ink px-2.5 py-2 text-sm text-white dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost font-sans z-50 pointer-events-none leading-relaxed">
                     {info}
                   </div>
                 )}
@@ -56,6 +59,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
           <input
+            id={inputId}
             type="range"
             ref={ref}
             className="w-full h-1 bg-ink/8 dark:bg-frost/8 appearance-none cursor-pointer rounded-full"
@@ -77,7 +81,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <div className="flex justify-between items-end mb-2 relative">
             <div className="flex items-center gap-1.5">
-                <span
+                <label
+                  htmlFor={inputId}
                   className={`font-sans text-[13px] font-medium ${
                     invalid
                       ? "text-scarlet dark:text-scarlet-bright"
@@ -85,7 +90,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   }`}
                 >
                   {label}
-                </span>
+                </label>
               {info && (
                 <button
                   type="button"
@@ -98,7 +103,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 </button>
               )}
               {showInfo && info && (
-                <div className="absolute left-0 bottom-full mb-1 w-56 p-2.5 bg-ink dark:bg-bone text-white dark:text-ink font-sans text-sm rounded shadow-lg z-50 pointer-events-none leading-relaxed">
+                <div className="absolute left-0 bottom-full mb-1 w-56 rounded border border-ink/10 bg-ink px-2.5 py-2 text-sm text-white dark:border-frost/10 dark:bg-charcoal-soft dark:text-frost font-sans z-50 pointer-events-none leading-relaxed">
                   {info}
                 </div>
               )}
@@ -112,18 +117,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           <input
+            id={inputId}
             type={type}
             ref={ref}
             value={type === "number" && props.value === 0 ? "" : props.value}
             placeholder={
               type === "number" && !props.placeholder ? "0" : props.placeholder
             }
-            className={`w-full h-11 rounded-[8px] px-4 font-sans text-[15px] text-ink dark:text-frost outline-none transition-all duration-500 placeholder:text-ink/30 dark:placeholder:text-frost/30
-                                   bg-ink/4 dark:bg-frost/4 border focus:bg-ink/6 dark:focus:bg-frost/6 ${
-                                     invalid
-                                       ? "border-scarlet/55 dark:border-scarlet-bright/60"
-                                       : "border-ink/9 dark:border-frost/8 focus:border-scarlet/40 dark:focus:border-scarlet-bright/40"
-                                   }`}
+             className={`w-full h-11 rounded-[8px] px-4 font-sans text-[15px] text-ink dark:text-frost outline-none transition-all duration-500 placeholder:text-ink/30 dark:placeholder:text-frost/40
+                                   bg-ink/4 dark:bg-charcoal-soft border focus:bg-ink/6 dark:focus:bg-charcoal-light ${
+                                      invalid
+                                        ? "border-scarlet/55 dark:border-scarlet-bright/60"
+                                        : "border-ink/9 dark:border-frost/10 focus:border-scarlet/40 dark:focus:border-scarlet-bright/40"
+                                    }`}
             aria-invalid={invalid}
             {...props}
           />

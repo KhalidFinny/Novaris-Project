@@ -1,29 +1,44 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
     /* COLORS — Scarlet */
     --color-scarlet: #a41624;
     --color-scarlet-dark: #82101b;
-    --color-scarlet-bright: #cc1f2e;
-    --color-scarlet-hover: #b81928;
+    --color-scarlet-bright: #d2b374;
+    --color-scarlet-hover: #e1c78f;
 
     /* COLORS — Steel */
     --color-steel: #2d5f8a;
-    --color-steel-bright: #5b99c9;
+    --color-steel-bright: #8fb8c4;
 
     /* COLORS — Bone (light mode bg) */
     --color-bone: #faf9f7;
     --color-bone-soft: #f5f4f2;
+    --color-cream: #fffdfa;
+    --color-cream-dark: #f1ede7;
 
     /* COLORS — Ink (light mode text) */
     --color-ink: #080e1c;
 
     /* COLORS — Void (dark mode bg) */
-    --color-void: #090b10;
-    --color-void-soft: #0e1018;
+    --color-void: #121821;
+    --color-void-soft: #18202a;
+    --color-charcoal: #1c2430;
+    --color-charcoal-soft: #24303d;
+    --color-charcoal-light: #334354;
 
     /* COLORS — Frost (dark mode text) */
-    --color-frost: #e6eaf8;
+    --color-frost: #f3efe6;
+
+    /* BRAND COLORS (for alerts and signals) */
+    --color-brand-ok: #1a7a50;
+    --color-brand-warn: #9a7200;
+    --color-brand-danger: #a82828;
+    --color-brand-accent: #ff5a36;
+    --color-brand-faint: #64748b;
+    --color-brand-bg: #faf9f7;
 
     /* FONTS */
     --font-fraunces: "Playfair Display", Georgia, serif;
@@ -55,6 +70,9 @@
     --animate-fade-up-slow: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-orb-float: orbFloat 11s ease-in-out infinite;
     --animate-orb-float-alt: orbFloat 14s ease-in-out infinite reverse;
+    --animate-pulse-logo: pulseLogo 3s ease-in-out infinite;
+    --animate-pulse-glow: pulseGlow 4s ease-in-out infinite;
+    --animate-loading-slide: loadingSlide 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
     /* TRANSITIONS */
     --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
@@ -87,6 +105,21 @@
     }
 }
 
+@keyframes pulseLogo {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.85; }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 0.1; }
+}
+
+@keyframes loadingSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+}
+
 /* ── BASE LAYER ────────────────────────────────────────── */
 @layer base {
     :root {
@@ -112,7 +145,7 @@
 
     /* Dark mode body */
     .dark body {
-        background-color: var(--color-void);
+        background-color: var(--color-charcoal);
         color: var(--color-frost);
     }
 
@@ -123,8 +156,12 @@
         inset: 0;
         pointer-events: none;
         z-index: 900;
-        opacity: 0.12;
+        opacity: 0.08;
         background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    }
+
+    .dark body::after {
+        opacity: 0.06;
     }
 
     /* Smooth theme transitions */
@@ -168,6 +205,19 @@
     }
     .dark :focus-visible {
         outline-color: var(--color-scarlet-bright);
+    }
+}
+
+/* ── UTILITIES ────────────────────────────────────────── */
+@layer utilities {
+    .eyebrow {
+        @apply font-mono text-[10px] tracking-[0.2em] uppercase font-bold;
+    }
+    .eyebrow-muted {
+        @apply text-ink/40 dark:text-frost/40;
+    }
+    .ease-novaris {
+        transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     }
 }
 
