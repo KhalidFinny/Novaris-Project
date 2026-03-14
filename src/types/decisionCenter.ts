@@ -126,6 +126,7 @@ export interface NarrativeTemplate {
     minRunwayDays?: number;
     maxRunwayDays?: number;
     projectDelayActive?: boolean;
+    projectDataPresent?: boolean;
     burnAccelerating?: boolean;
     revenueGapPercent?: number;
     maxRevenueGapPercent?: number;

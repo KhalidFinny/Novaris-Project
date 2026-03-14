@@ -105,10 +105,10 @@ export const NARRATIVE_TEMPLATES: NarrativeTemplate[] = [
       cashRunwayStatus: 'safe',
       minRunwayDays: 60,
     },
-    headline: "Your cash position is stable.",
-    unseenRisk: "Complacency is the hidden risk. Strong cash can mask operational inefficiencies until they compound.",
-    contextualImpact: "{{runwayDays}} days of runway provides solid protection. You can absorb {{shockCount}} major shocks simultaneously.",
-    recommendation: "Maintain discipline. Use this stability to invest strategically, not to relax cost controls.",
+    headline: "Your cash position looks healthy and stable.",
+    unseenRisk: "The only risk here is getting too comfortable. While things are good, it's the right time to double-check if your costs are as lean as they could be.",
+    contextualImpact: "With {{runwayDays}} days of cash breathing room, you can handle {{shockCount}} unexpected bills at the same time without breaking a sweat.",
+    recommendation: "Stay disciplined. Use this calm period to set aside a little extra or look into ways to grow without adding too much new expense.",
     riskLevel: 'low',
   },
   
@@ -164,7 +164,7 @@ export const NARRATIVE_TEMPLATES: NarrativeTemplate[] = [
   {
     id: 'project-02',
     category: 'project',
-    priority: 85,
+    priority: 92,
     conditions: {
       projectDelayActive: true,
     },
@@ -220,14 +220,15 @@ export const NARRATIVE_TEMPLATES: NarrativeTemplate[] = [
   {
     id: 'project-06',
     category: 'project',
-    priority: 65,
+    priority: 82,
     conditions: {
+      projectDataPresent: true,
       projectDelayActive: false,
     },
-    headline: "Projects are on track, but margins are tight.",
-    unseenRisk: "On-time delivery masks underlying fragility. Small disruptions will push you into delay territory quickly.",
-    contextualImpact: "Current buffer: {{bufferDays}} days. Industry variance is typically {{typicalVariance}} days. Little room for error.",
-    recommendation: "Build 15% time buffer into all future project phases. Protect the margin that keeps you on schedule.",
+    headline: "Everything is moving as planned, but keep an eye on the margins.",
+    unseenRisk: "When everything looks 'okay', small slips can go unnoticed until they start affecting your cash.",
+    contextualImpact: "You currently have {{bufferDays}} days of wiggle room. That's a decent cushion, but unexpected changes can eat through it quickly.",
+    recommendation: "Keep doing what you're doing, but try to build in a little extra time for your future plans just to be safe.",
     riskLevel: 'low',
   },
   
@@ -513,10 +514,10 @@ export const NARRATIVE_TEMPLATES: NarrativeTemplate[] = [
       maxRevenueGapPercent: 5,
       maxClientDependencyPercent: 25,
     },
-    headline: "Your foundations look healthy across cash, delivery, and client mix.",
-    unseenRisk: "Healthy systems are easy to underinvest in because nothing feels urgent. Quiet strength still needs maintenance.",
-    contextualImpact: "Cash covers {{runwayDays}} days, projects are staying on track, and no single client dominates your income.",
-    recommendation: "Document the habits behind this stability now. Strong operating rhythm is what keeps a good quarter from becoming a lucky one.",
+    headline: "Your business foundation looks solid across cash and clients.",
+    unseenRisk: "A healthy business is easy to take for granted. Since nothing feels urgent, it's the perfect time to optimize your systems.",
+    contextualImpact: "Your cash covers {{runwayDays}} days, and you aren't leaning too heavily on just one client for your income.",
+    recommendation: "Write down the good habits that brought you here. A solid routine is what keeps a good month from being just 'lucky'.",
     riskLevel: 'low',
   },
 
@@ -544,7 +545,7 @@ const TEMPLATE_TRANSLATIONS: Partial<Record<NarrativeLanguage, Record<string, Pi
     'cash-03': { headline: 'Proyek yang molor perlambat aliran uang Anda.', unseenRisk: 'Tiap hari yang telat berarti Anda keluar uang {{dailyBurn}} tapi uang masuk {{blockedPayment}} masih tertahan. Ini bikin rugi dua kali lipat.', contextualImpact: 'Keterlambatan ini sudah memotong masa napas bisnis Anda sebanyak {{consumedDays}} hari. Kalau tidak diberesi, tekanannya akan makin kerasa.', recommendation: 'Fokus beresi {{projectName}} supaya bisa segera ditagih pembayarannya. Kalau perlu cari bantuan orang tambahan supaya cepat selesai.' },
     'cash-04': { headline: 'Pengeluaran Anda mulai naik lebih cepat.', unseenRisk: 'Biaya naik melampaui pemasukan. Yang tadinya dikira investasi, ternyata malah menguras uang cadangan Anda.', contextualImpact: 'Biaya naik {{burnTrend}}% bulan ini. Kalau terus begini, napas bisnis Anda bisa turun dari {{currentRunway}} jadi {{projectedRunway}} hari lebih cepat.', recommendation: 'Cek lagi pengeluaran 30 hari terakhir. Pisahkan mana yang wajib dan mana yang cuma keinginan. Hentikan dulu yang tidak wajib sekarang.' },
     'cash-05': { headline: 'Dobel bahaya: kas tipis dan burn naik.', unseenRisk: 'Kombinasi terburuk - uang menipis saat pengeluaran semakin cepat. Ini pola spiral kematian.', contextualImpact: 'Dengan sisa {{runwayDays}} hari dan burn naik {{burnTrend}}%, Anda hanya punya {{effectiveDays}} hari efektif sebelum krisis.', recommendation: 'Triage darurat: potong semua pengeluaran non-esensial hari ini, hubungi 3 klien terbesar untuk pembayaran lebih cepat, dan modelkan skenario terburuk.' },
-    'cash-06': { headline: 'Posisi kas Anda stabil.', unseenRisk: 'Risiko tersembunyinya adalah rasa aman palsu. Kas kuat bisa menutupi inefisiensi operasional sampai dampaknya membesar.', contextualImpact: '{{runwayDays}} hari runway memberi perlindungan yang solid. Anda bisa menyerap {{shockCount}} guncangan besar sekaligus.', recommendation: 'Pertahankan disiplin. Gunakan stabilitas ini untuk investasi strategis, bukan untuk melonggarkan kontrol biaya.' },
+    'cash-06': { headline: 'Posisi kas Anda terlihat sehat dan stabil.', unseenRisk: 'Satu-satunya risiko di sini adalah jika Anda merasa terlalu aman. Selagi kondisi sedang bagus, ini waktu yang tepat untuk cek kembali apakah pengeluaran Anda sudah se-efisien mungkin.', contextualImpact: 'Dengan napas bisnis selama {{runwayDays}} hari, Anda bisa menahan {{shockCount}} pengeluaran mendadak sekaligus tanpa perlu pusing.', recommendation: 'Tetap disiplin. Gunakan masa tenang ini untuk menabung sedikit lebih banyak atau cari cara untuk tumbuh tanpa menambah banyak beban biaya baru.' },
     'cash-07': { headline: 'Anda hidup dari invoice ke invoice.', unseenRisk: 'Runway Anda ditopang oleh penagihan yang diharapkan, bukan kas nyata. Jika AR tertunda, gambarnya berubah sangat cepat.', contextualImpact: '{{arDependency}}% runway Anda bergantung pada penagihan. Jika pembayaran telat 2 minggu, runway efektif menjadi {{adjustedRunway}} hari.', recommendation: 'Diversifikasi sumber kas. Kurangi ketergantungan pada satu invoice besar. Bangun cadangan kas murni 45 hari.' },
     'cash-08': { headline: 'Saat ini masih nyaman, tapi awasi arahnya.', unseenRisk: 'Ini plateau sebelum penurunan. Banyak bisnis merasa aman di 45-60 hari lalu terkejut saat tekanan tiba-tiba naik.', contextualImpact: 'Posisi sekarang cukup, tetapi ruang untuk salah sangat terbatas. Satu pengeluaran besar tak terduga bisa mengubah semuanya.', recommendation: 'Perpanjang runway ke 90 hari. Fokus pada arus pendapatan berulang yang lebih dapat diprediksi.' },
     'project-01': { headline: 'Proyek yang telat mulai mencekik keuangan Anda.', unseenRisk: 'Siklus "kerja-selesai-bayar" lagi macet. Tiap milestone yang telat menahan uang yang sebenarnya sudah Anda rencanakan buat dipakai.', contextualImpact: 'Delay di {{projectName}} menahan uang {{blockedAmount}} selama {{delayDays}} hari terakhir. Itu uang yang harusnya sudah bisa Anda pakai.', recommendation: 'Mending keluar uang sedikit buat tambah orang di {{projectName}} biar cepat beres. Biayanya jauh lebih murah dibanding uang Anda tertahan terus.' },
@@ -552,7 +553,7 @@ const TEMPLATE_TRANSLATIONS: Partial<Record<NarrativeLanguage, Record<string, Pi
     'project-03': { headline: 'Tim Anda terkunci di proyek yang tersendat.', unseenRisk: 'Sunk cost fallacy sedang berjalan. Terus membakar resource di proyek macet mencegah Anda memulai pekerjaan yang benar-benar menghasilkan.', contextualImpact: '{{teamSize}} orang ada di {{projectName}} selama {{stalledDays}} hari tanpa progres. Itu berarti {{burnedAmount}} terbakar tanpa hasil.', recommendation: 'Ambil keputusan tegas: suntik resource agar selesai dalam 7 hari atau jeda resmi dan alihkan tim.' },
     'project-04': { headline: 'Keterlambatan supplier mengancam komitmen Anda.', unseenRisk: 'Reputasi Anda ikut dipertaruhkan. Dependensi eksternal mendorong Anda menuju kegagalan memenuhi janji ke klien.', contextualImpact: 'Variansi supplier {{varianceDays}} hari membuat Anda {{riskDays}} hari melewati komitmen ke klien. Penalti bisa muncul.', recommendation: 'Hubungi klien sekarang dan reset ekspektasi sebelum gagal nanti. Cari supplier cadangan untuk komponen kritis.' },
     'project-05': { headline: 'Scope creep sedang membunuh timeline Anda.', unseenRisk: 'Proyek ini sudah bukan proyek yang dulu Anda estimasi. Setiap tambahan kecil menumpuk menjadi keterlambatan besar.', contextualImpact: 'Timeline awal: {{originalDays}} hari. Proyeksi sekarang: {{currentDays}} hari. Scope bertambah {{scopePercent}}% lebih banyak pekerjaan.', recommendation: 'Bekukan scope 30 hari. Tuntaskan komitmen saat ini dulu. Catat change request untuk fase berikutnya.' },
-    'project-06': { headline: 'Proyek masih on track, tapi marginnya tipis.', unseenRisk: 'Pengiriman tepat waktu bisa menutupi rapuhnya sistem. Gangguan kecil saja bisa cepat mendorong Anda ke wilayah delay.', contextualImpact: 'Buffer saat ini hanya {{bufferDays}} hari. Variansi industri biasanya {{typicalVariance}} hari. Ruang salah sangat kecil.', recommendation: 'Tambahkan buffer waktu 15% di semua fase proyek berikutnya. Lindungi margin yang menjaga jadwal tetap aman.' },
+    'project-06': { headline: 'Semuanya berjalan sesuai rencana, tapi tetap pantau margin Anda.', unseenRisk: 'Saat semuanya terlihat "oke", kesalahan kecil bisa tidak disadari sampai akhirnya mulai memengaruhi kas Anda.', contextualImpact: 'Saat ini Anda punya cadangan waktu {{bufferDays}} hari. Ini bantalan yang lumayan, tapi perubahan tak terduga bisa menghabiskannya dengan cepat.', recommendation: 'Lanjutkan apa yang sudah Anda lakukan, tapi coba siapkan sedikit waktu ekstra untuk rencana Anda ke depan supaya lebih aman.' },
     'project-07': { headline: 'Kepercayaan klien terkikis di setiap delay.', unseenRisk: 'Dampaknya tidak selalu terlihat, tapi sangat kritis. Delay berulang merusak hubungan yang dibangun bertahun-tahun.', contextualImpact: '{{clientName}} sudah mengalami {{delayCount}} delay. Skor risiko hubungan: {{riskScore}}/100. Sudah mendekati ambang.', recommendation: 'Lakukan retention secara proaktif: telepon klien hari ini, akui delay-nya, jelaskan perbaikannya, dan beri kompensasi yang nyata.' },
     'revenue-01': { headline: 'Anda tertinggal dari target pendapatan.', unseenRisk: 'Celah ini menumpuk. Setiap bulan yang meleset membuat target tahunan semakin sulit dicapai dan memaksa pengejaran yang tidak sehat.', contextualImpact: 'Gap saat ini: {{gapAmount}} ({{gapPercent}}% di bawah target). Untuk mengejar target tahunan, Anda butuh pertumbuhan {{requiredGrowth}}% bulan depan.', recommendation: 'Audit pipeline sekarang: cari deal yang bisa ditutup bulan ini. Pertimbangkan pricing promosi untuk mempercepat keputusan.' },
     'revenue-02': { headline: 'Kekurangan pendapatan mulai menjadi masalah struktural.', unseenRisk: 'Ini bukan sekadar bulan yang buruk - ini pola. Gap yang terus berulang menandakan masalah pasar, pricing, atau eksekusi.', contextualImpact: '{{consecutiveMonths}} bulan berturut-turut di bawah target. Gap kumulatif: {{cumulativeGap}}. Target tahunan terancam.', recommendation: 'Lakukan review strategis: analisis win/loss rate, pricing kompetitor, dan positioning pasar. Pertimbangkan pivot atau perubahan harga.' },
@@ -570,7 +571,7 @@ const TEMPLATE_TRANSLATIONS: Partial<Record<NarrativeLanguage, Record<string, Pi
     'opportunity-02': { headline: 'Kas kuat dan pendapatan kuat memberi Anda banyak opsi.', unseenRisk: 'Analysis paralysis. Terlalu banyak pilihan bagus bisa membuat Anda tidak memilih apa pun saat momentum masih terbuka.', contextualImpact: '{{surplusCash}} surplus kas. {{surplusRevenue}} di atas target. Ini kombinasi yang jarang. Jendelanya sedang terbuka.', recommendation: 'Buat satu langkah berani. Pilih peluang dengan conviction tertinggi lalu komitkan resource penuh. Upaya setengah-setengah hanya membuang momen ini.' },
     'opportunity-03': { headline: 'Ketahanan sudah terbukti - Anda berhak mendapat fleksibilitas strategis.', unseenRisk: 'Kesuksesan masa lalu tidak menjamin masa depan. Kondisi pasar bergeser. Ketahanan hari ini bisa menjadi kekakuan besok.', contextualImpact: 'Anda mempertahankan posisi kuat selama {{stableMonths}} bulan. Sistemnya bekerja. Saatnya mengoptimalkan, bukan sekadar bertahan.', recommendation: 'Geser dari bertahan ke menyerang. Naikkan investasi pertumbuhan 15%. Uji pasar atau produk baru saat Anda masih punya bantalan.' },
     'opportunity-04': { headline: 'Bisnis Anda punya ruang untuk memilih, bukan hanya bereaksi.', unseenRisk: 'Angka yang kuat bisa menggoda Anda mengejar terlalu banyak ide sekaligus. Fokus tetap penting meski tekanannya rendah.', contextualImpact: 'Runway ada di {{runwayDays}} hari dan pendapatan {{gapPercent}}% di atas target. Itu memberi Anda waktu dan momentum sekaligus.', recommendation: 'Gunakan bantalan ini dengan sengaja: pilih satu taruhan pertumbuhan, danai penuh, dan lindungi disiplin yang membawa Anda sampai di sini.' },
-    'opportunity-05': { headline: 'Fondasi Anda terlihat sehat di kas, delivery, dan campuran klien.', unseenRisk: 'Sistem yang sehat mudah diabaikan karena tidak terasa mendesak. Kekuatan yang tenang tetap perlu dirawat.', contextualImpact: 'Kas menutupi {{runwayDays}} hari, proyek tetap on track, dan tidak ada satu klien yang mendominasi pemasukan.', recommendation: 'Dokumentasikan kebiasaan yang menciptakan stabilitas ini sekarang. Ritme operasi yang kuat mencegah kuartal baik berubah jadi sekadar keberuntungan.' },
+    'opportunity-05': { headline: 'Fondasi bisnis Anda terlihat solid baik dari sisi kas maupun klien.', unseenRisk: 'Bisnis yang sehat kadang membuat kita kurang waspada karena tidak ada yang terasa mendesak. Ini justru waktu yang pas untuk merapikan sistem Anda.', contextualImpact: 'Kas Anda cukup untuk {{runwayDays}} hari, dan Anda tidak terlalu tergantung pada satu klien saja untuk pemasukan.', recommendation: 'Catat kebiasaan baik yang membawa Anda sampai ke posisi ini. Rutinitas yang solid adalah kunci agar bulan yang baik tidak cuma jadi sekadar "beruntung".' },
     'opportunity-06': { headline: 'Pendapatan melewati target dan buffer Anda tetap terjaga.', unseenRisk: 'Inilah momen untuk memperkuat sistem sebelum pertumbuhan membuat setiap titik lemah jauh lebih mahal diperbaiki.', contextualImpact: 'Anda unggul {{surplusAmount}} dari target sambil masih membawa {{runwayDays}} hari runway. Itu ruang bernapas yang nyata.', recommendation: 'Ubah surplus menjadi ketahanan: rapikan penagihan, perkuat kapasitas delivery, dan jaga konsentrasi klien di bawah 30%.' },
   },
 };
@@ -597,6 +598,12 @@ export function selectTemplate(
   const matching = NARRATIVE_TEMPLATES.filter(template => {
     const cond = template.conditions;
     
+    // Strict filter for situational categories
+    // If no project data is present, we FORBID project and compound narratives
+    if (!conditions.projectDataPresent && (template.category === 'project' || template.category === 'compound')) {
+      return false;
+    }
+
     // Check cash runway status
     if (cond.cashRunwayStatus && conditions.cashRunwayStatus !== cond.cashRunwayStatus) {
       return false;

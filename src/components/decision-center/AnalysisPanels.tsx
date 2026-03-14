@@ -217,28 +217,30 @@ export function AnalysisPanels({
             </div>
 
             {/* Project Acceleration */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-sans text-[13px] text-ink dark:text-frost">
-                  {isId ? "Akselerasi Proyek" : "Project Acceleration"}
-                </span>
-                <span className="font-sans text-[13px] font-medium text-ink">
-                  {Number(scenarioInputs.projectAccelerationWeeks) || 0} {isId ? "minggu" : "weeks"}
-                </span>
+            {data.riskScores.some(s => s.category.toLowerCase().includes('delay') || s.category.toLowerCase().includes('eksposur')) && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-sans text-[13px] text-ink dark:text-frost">
+                    {isId ? "Akselerasi Proyek" : "Project Acceleration"}
+                  </span>
+                  <span className="font-sans text-[13px] font-medium text-ink">
+                    {Number(scenarioInputs.projectAccelerationWeeks) || 0} {isId ? "minggu" : "weeks"}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="4"
+                  step="1"
+                  value={Number(scenarioInputs.projectAccelerationWeeks) || 0}
+                  onChange={(e) => onUpdateScenario({ projectAccelerationWeeks: Number(e.target.value) })}
+                  className="w-full"
+                />
+                <p className="font-sans text-[11px] text-ink/52 dark:text-frost/60 mt-1">
+                  {isId ? "Percepat penyelesaian untuk pembayaran lebih awal" : "Speed up completion for earlier payment"}
+                </p>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="4"
-                step="1"
-                value={Number(scenarioInputs.projectAccelerationWeeks) || 0}
-                onChange={(e) => onUpdateScenario({ projectAccelerationWeeks: Number(e.target.value) })}
-                className="w-full"
-              />
-              <p className="font-sans text-[11px] text-ink/52 dark:text-frost/60 mt-1">
-                {isId ? "Percepat penyelesaian untuk pembayaran lebih awal" : "Speed up completion for earlier payment"}
-              </p>
-            </div>
+            )}
 
             {/* Overhead Reduction */}
             <div>

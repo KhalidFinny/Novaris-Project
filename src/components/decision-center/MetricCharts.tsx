@@ -265,7 +265,9 @@ export function MetricCharts({
                 <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
                   <InfoChip 
                     label={isId ? "Kasus terburuk" : "Worst case"} 
-                    help={isId ? "Kemungkinan 18% di mana pendapatan turun drastis atau biaya melonjak tinggi." : "18% probability where revenue drops sharply or costs spike unexpectedly."} 
+                    help={isId 
+                      ? `Kemungkinan ${data.monteCarlo.worst.probability}% di mana pendapatan turun drastis atau biaya melonjak tinggi.` 
+                      : `${data.monteCarlo.worst.probability}% probability where revenue drops sharply or costs spike unexpectedly.`} 
                   />
                 </p>
                 <div>
@@ -278,7 +280,9 @@ export function MetricCharts({
                 <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
                   <InfoChip 
                     label={isId ? "Kasus dasar" : "Base case"} 
-                    help={isId ? "Hasil yang paling mungkin (52%) berdasarkan performa rata-rata dan biaya saat ini." : "The most likely outcome (52%) based on average performance and current bills."} 
+                    help={isId 
+                      ? `Hasil yang paling mungkin (${data.monteCarlo.base.probability}%) berdasarkan performa rata-rata dan biaya saat ini.` 
+                      : `The most likely outcome (${data.monteCarlo.base.probability}%) based on average performance and current bills.`} 
                   />
                 </p>
                 <div>
@@ -291,7 +295,9 @@ export function MetricCharts({
                 <p className="font-sans text-[15px] text-ink/56 dark:text-frost/60">
                   <InfoChip 
                     label={isId ? "Kasus terbaik" : "Best case"} 
-                    help={isId ? "Peluang 20% di mana pendapatan melampaui target dan efisiensi biaya tercapai." : "20% probability where revenue exceeds targets and cost efficiencies are met."} 
+                    help={isId 
+                      ? `Peluang ${data.monteCarlo.best.probability}% di mana pendapatan melampaui target dan efisiensi biaya tercapai.` 
+                      : `${data.monteCarlo.best.probability}% probability where revenue exceeds targets and cost efficiencies are met.`} 
                   />
                 </p>
                 <div>

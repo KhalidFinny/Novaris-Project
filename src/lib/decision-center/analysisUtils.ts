@@ -16,30 +16,30 @@ export const buildAnalysisText = (category: string, scoreValue: number, trend: s
 
   if (categoryKey === "cash") {
     return isId
-      ? `Tabungan kas Anda saat ini dalam kondisi ${label}. Risikonya ${direction}, jadi pertanyaannya: apakah uang yang ada sekarang cukup kalau tiba-tiba ada pengeluaran tak terduga?`
-      : `Your cash savings look ${label} right now. The risk level ${direction}, so the main thing to watch is whether you have enough to handle a surprise expense.`;
+      ? `Tabungan kas Anda saat ini dalam kondisi ${label}. Risikonya ${direction}. Pertanyaan utamanya: apakah uang yang ada sekarang cukup untuk menahan pengeluaran tak terduga?`
+      : `Your cash savings look ${label} right now. The risk level ${direction}. The main thing to watch is whether you have enough to handle a surprise expense comfortably.`;
   }
 
   if (categoryKey === "revenue") {
     return isId
-      ? `Skor ini melihat selisih antara pemasukan bulanan dan biaya hidup bisnis Anda. Kami memantau apakah jaraknya masih aman atau sudah mulai mepet sehingga mengganggu operasional.`
-      : `This score looks at the gap between your monthly income and your business bills. We're checking if that gap is still safe or getting too tight for comfort.`;
+      ? `Skor ini melihat selisih antara pemasukan bulanan dan biaya operasional bisnis Anda. Kami memantau apakah jaraknya masih aman atau sudah mulai terlalu mepet.`
+      : `This score looks at the gap between your monthly income and your business bills. We're checking if that gap is still safe or getting a little too tight for comfort.`;
   }
 
   if (categoryKey === "client") {
     return isId
-      ? `Hal ini menunjukkan seberapa bahaya bisnis Anda kalau klien terbesar tiba-tiba pergi atau berhenti bayar. Semakin tinggi skornya, berarti Anda terlalu bergantung pada satu orang saja.`
-      : `This shows how much danger your business is in if your biggest customer suddenly leaves. A higher score means you're leaning too much on just one source of income.`;
+      ? `Hal ini menunjukkan risiko jika klien terbesar tiba-tiba berhenti bekerja sama. Semakin tinggi skornya, berarti bisnis Anda sangat bergantung pada satu sumber pemasukan saja.`
+      : `This shows what might happen if your biggest customer suddenly stops working with you. A higher score means you're leaning a bit too much on just one source of income.`;
   }
 
   if (categoryKey === "delay") {
     return isId
-      ? `Skor ini memantau apakah keterlambatan kerja bisa langsung bikin kantong kering. Intinya: seberapa mudah jadwal yang molor mengganggu aliran uang masuk Anda.`
-      : `This score checks if project delays might lead to a cash crunch. Basically: how easily a slipping schedule starts blocking your incoming payments.`;
+      ? `Skor ini memantau seberapa mudah jadwal yang molor bisa mengganggu aliran uang masuk Anda. Intinya: seberapa kuat bantalan waktu Anda saat ini.`
+      : `This score checks how easily a slipping schedule might start blocking your incoming payments. Basically: how strong your "time buffer" is right now.`;
   }
 
   return isId
-    ? `Ini adalah skor gabungan yang merangkum kondisi bisnis Anda secara keseluruhan saat ini, supaya Anda bisa melihat gambaran besarnya dengan cepat.`
+    ? `Ini adalah skor gabungan yang merangkum kondisi keuangan dan operasional Anda saat ini, supaya Anda bisa melihat gambaran besarnya dengan cepat.`
     : `This is a combined score that summarizes your overall business health right now, so you can see the big picture at a glance.`;
 };
 
@@ -48,31 +48,31 @@ export const buildCalculationText = (category: string, scenarioOutput: any, isId
 
   if (categoryKey === "cash") {
     return isId
-      ? `Berdasarkan pengeluaran Anda, uang di bank akan habis dalam ${scenarioOutput?.projectedRunway ?? "?"} hari. Perubahan skenario ini menambah napas bisnis Anda selama ${scenarioOutput?.runwayDelta ?? 0} hari.`
-      : `Based on your spending, your cash will last about ${scenarioOutput?.projectedRunway ?? "?"} days. This scenario adds ${scenarioOutput?.runwayDelta ?? 0} days of "breathing room" for your business.`;
+      ? `Berdasarkan pengeluaran Anda, uang di bank diperkirakan akan habis dalam ${scenarioOutput?.projectedRunway ?? "?"} hari. Skenario ini bisa menambah napas bisnis Anda selama ${scenarioOutput?.runwayDelta ?? 0} hari.`
+      : `Based on your spending, your cash will last about ${scenarioOutput?.projectedRunway ?? "?"} days. This scenario can add ${scenarioOutput?.runwayDelta ?? 0} days of "breathing room" for your business.`;
   }
 
   if (categoryKey === "revenue") {
     return isId
-      ? `Dihitung dari selisih antara apa yang Anda dapatkan vs apa yang harus dibayar. Kami memantau seberapa cepat kekurangan uang ini bisa bikin bisnis goyang.`
-      : `Calculated from the difference between what you earn vs what you owe. We're tracking how quickly this gap could put pressure on your business.`;
+      ? `Dihitung dari selisih antara apa yang Anda dapatkan vs biaya yang harus dibayar. Kami memantau seberapa cepat celah ini bisa memengaruhi keleluasaan bisnis Anda.`
+      : `Calculated from the difference between what you earn vs what you owe. We're tracking how this gap affects your ability to move comfortably.`;
   }
 
   if (categoryKey === "client") {
     return isId
-      ? `Semakin besar porsi satu klien dalam pendapatan Anda, semakin bahaya posisinya. Kami memberikan tanda bahaya jika ada satu orang yang terlalu mengontrol keuangan Anda.`
-      : `The more one customer pays you, the riskier it gets. We raise a flag when one person has too much control over your total income.`;
+      ? `Semakin besar porsi satu klien dalam pendapatan Anda, semakin tinggi risikonya. Kami memberi tanda jika ada satu pihak yang punya kontrol terlalu besar atas total pemasukan Anda.`
+      : `The more one customer pays you, the riskier it gets. We raise a flag when one party has a lot of control over your total income.`;
   }
 
   if (categoryKey === "delay") {
     return isId
-      ? `Kami menghitung seberapa kuat "cadangan waktu" Anda dan bagaimana keterlambatan bayar dari klien bisa langsung memacetkan kas bisnis.`
-      : `We calculate how much "time buffer" you have and how a late payment from a client could immediately lock up your business cash.`;
+      ? `Kami menghitung seberapa kuat cadangan waktu Anda dan bagaimana keterlambatan pembayaran bisa langsung memengaruhi ketersediaan kas bisnis.`
+      : `We calculate how much "time buffer" you have and how a late payment might immediately affect your business cash flow.`;
   }
 
   return isId
-    ? `Skor ini menggabungkan semua faktor (kas, pemasukan, ketergantungan klien, dan delay) untuk memberikan nilai akhir kesehatan bisnis Anda.`
-    : `This score blends all factors (cash, income, client dependency, and delays) to give a final "health check" number for your business.`;
+    ? `Skor ini menggabungkan berbagai faktor (kas, pemasukan, ketergantungan klien, dan jadwal) untuk memberikan nilai akhir kesehatan bisnis Anda.`
+    : `This score blends different factors (cash, income, client dependency, and schedules) to give a final "health check" number for your business.`;
 };
 
 export const generateSuggestions = (category: string, score: number, isId: boolean) => {
@@ -81,62 +81,62 @@ export const generateSuggestions = (category: string, score: number, isId: boole
   if (categoryKey === "cash") {
     if (score >= 70) {
       return isId 
-        ? "Waktu Anda sangat mepet. Segera cari suntikan dana atau potong biaya yang tidak penting hari ini juga. Fokus utama: pastikan bisnis tetap hidup."
-        : "Your time is running out. Find extra funds or cut non-essential costs immediately. Main focus: making sure the business survives.";
+        ? "Waktu Anda cukup mepet. Segera cari cara untuk menambah kas atau tunda pengeluaran yang tidak mendesak. Prioritas utama: menjaga napas bisnis tetap aman."
+        : "Your time is running thin. Find ways to add cash or delay non-urgent costs immediately. Main focus: keeping the business's breathing room safe.";
     } else if (score >= 40) {
       return isId
-        ? "Persediaan uang mulai menipis. Coba cek lagi biaya apa yang bisa ditunda dan tagih klien yang belum bayar secepatnya."
-        : "Cash is getting tight. Look for expenses you can delay and follow up with clients who haven't paid yet.";
+        ? "Persediaan uang mulai menipis. Coba cek kembali biaya yang bisa ditunda dan pastikan penagihan ke klien berjalan lancar."
+        : "Cash is getting a bit tight. Look for expenses you can delay and make sure your client follow-ups are on track.";
     } else {
       return isId
-        ? "Posisi uang Anda aman. Usahakan punya cadangan buat 3 bulan ke depan agar lebih tenang saat ingin mengembangkan bisnis."
-        : "Your cash position is healthy. Try to keep a 3-month buffer so you can feel safe while growing your business.";
+        ? "Posisi uang Anda sehat. Usahakan punya cadangan buat 3 bulan ke depan supaya Anda punya ruang lebih saat ingin mengembangkan bisnis."
+        : "Your cash position is healthy. Try to keep a 3-month buffer so you have more room to move when you're ready to grow.";
     }
   }
   if (categoryKey === "revenue") {
     if (score >= 70) {
       return isId
-        ? "Pemasukan jauh di bawah pengeluaran. Anda butuh sumber pendapatan baru atau coba naikkan harga layanan Anda."
-        : "Your income is way below your bills. You need new ways to make money or consider raising your prices.";
+        ? "Pemasukan saat ini tertinggal dari biaya operasional. Anda mungkin butuh sumber pendapatan tambahan atau meninjau kembali harga layanan Anda."
+        : "Your income is currently trailing behind your bills. You might need new revenue sources or to review your pricing structure.";
     } else if (score >= 40) {
       return isId
-        ? "Pemasukan hampir cukup buat nutup biaya. Fokus jaga hubungan dengan klien yang ada dan tawarkan layanan tambahan."
-        : "Income is almost enough to cover bills. Focus on keeping your current clients happy and look for extra work with them.";
+        ? "Pemasukan hampir cukup untuk menutup biaya. Fokus jaga hubungan dengan klien yang ada dan tawarkan bantuan tambahan jika memungkinkan."
+        : "Income is nearly enough to cover bills. Focus on keeping current clients happy and look for extra ways to help them.";
     } else {
       return isId
-        ? "Bagus! Pemasukan sudah lebih dari cukup. Mulai pikirkan cara lain buat cari uang supaya tidak tergantung di satu tempat saja."
-        : "Great! You're making more than you spend. Start thinking about diversifying your income so you're not stuck with just one source.";
+        ? "Bagus! Pemasukan sudah cukup untuk menutup biaya. Mulai pikirkan cara untuk menambah variasi sumber pendapatan agar bisnis lebih stabil."
+        : "Great! You're making enough to cover your bills. Start thinking about adding different income sources to make the business even more stable.";
     }
   }
   if (categoryKey === "client") {
     if (score >= 70) {
       return isId
-        ? "Sangat bahaya karena terlalu tergantung pada satu klien. Wajib cari 2-3 klien baru sekarang juga supaya tidak gampang tumbang."
-        : "Very risky to depend this much on one client. You must find 2-3 new customers immediately so you're not easily affected if one leaves.";
+        ? "Risikonya cukup tinggi karena terlalu tergantung pada satu klien. Sangat disarankan untuk mulai mencari 2-3 klien baru agar bisnis tidak mudah goyah."
+        : "It's quite risky to depend this much on one client. It's highly recommended to start finding 2-3 new customers so your business stays steady.";
     } else if (score >= 40) {
       return isId
-        ? "Ketergantungan cukup tinggi. Mulai cari calon klien baru dari sekarang buat jaga-jaga kalau klien utama Anda berhenti."
-        : "Dependency is high. Start looking for new potential clients now as a backup in case your main one stops.";
+        ? "Ketergantungan klien agak tinggi. Mulai cari calon klien baru dari sekarang untuk berjaga-jaga jika klien utama Anda berhenti."
+        : "Client dependency is a bit high. Start looking for new potential clients now as a backup in case your main one stops.";
     } else {
       return isId
-        ? "Bagus, klien Anda sudah beragam. Pertahankan kondisi ini supaya bisnis tetap stabil."
+        ? "Bagus, daftar klien Anda sudah beragam. Pertahankan kondisi ini supaya bisnis tetap stabil."
         : "Good, your client list is well-balanced. Keep it this way to stay stable.";
     }
   }
   if (categoryKey === "delay") {
     if (score >= 70) {
       return isId
-        ? "Risiko molor sangat tinggi. Siapkan dana cadangan ekstra atau coba bicarakan ulang jadwalnya dengan klien."
-        : "High risk of delays. Prepare some extra cash as a backup or talk to your client about adjusting the schedule.";
+        ? "Risiko jadwal terhambat cukup tinggi. Siapkan dana cadangan ekstra atau coba diskusikan kembali jadwal dengan klien Anda."
+        : "The risk of jumping off schedule is high. Prepare some extra cash as a backup or discuss the timeline again with your client.";
     } else if (score >= 40) {
       return isId
-        ? "Ada potensi keterlambatan. Pantau terus progresnya dan komunikasikan risikonya ke klien dari awal."
-        : "Delays are possible. Keep a close eye on progress and let your client know about any risks early on.";
+        ? "Ada potensi keterlambatan. Tetap pantau progres berkala dan komunikasikan setiap risiko ke klien dari awal."
+        : "Slipping behind is possible. Keep a close eye on progress and let your client know about any risks early on.";
     } else {
       return isId
-        ? "Proyek berjalan lancar. Tetap jaga komunikasi yang rutin dengan tim Anda."
-        : "Project is on track. Keep talking regularly with your team.";
+        ? "Operasional berjalan lancar. Tetap jaga komunikasi rutin dengan tim Anda."
+        : "Operations are on track. Keep talking regularly with your team.";
     }
   }
-  return isId ? "Pantau terus angka-angka ini ya." : "Keep a close eye on these numbers.";
+  return isId ? "Terus pantau angka-angka ini ya." : "Keep a close eye on these numbers.";
 };
