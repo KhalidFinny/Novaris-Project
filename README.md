@@ -37,14 +37,14 @@ Calculates delay probability and duration based on objective project factors (bu
 ## Local Development
 
 ```bash
-npm install
-npm run dev
+bun install
+bun dev
 ```
 
 Build:
 
 ```bash
-npm run build
+bun build
 ```
 
 ## Deployment
